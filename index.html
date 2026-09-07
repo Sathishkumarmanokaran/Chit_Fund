@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#4f46e5">
+<title>Offline Chit Fund Tracker</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;background:#f5f7fb;color:#172033}button,input,select,textarea{font:inherit}button{cursor:pointer}
+.top{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid #e5e7eb}.bar{max-width:1200px;margin:auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}.logo{width:42px;height:42px;border-radius:12px;background:#4f46e5;color:#fff;display:grid;place-items:center;font-size:21px;font-weight:800}.brand h1{font-size:19px;margin:0;white-space:nowrap}.brand p{margin:2px 0 0;color:#7b8495;font-size:11px}
+.actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.btn{border:1px solid #dfe3ea;background:#fff;color:#334155;border-radius:10px;padding:9px 13px;font-weight:700;font-size:13px;transition:background .15s,border-color .15s,transform .08s}.btn:hover{background:#f8fafc;border-color:#c7cedb}.btn:active{transform:scale(.97)}.primary{background:#4f46e5;color:#fff;border-color:#4f46e5}.primary:hover{background:#4338ca;border-color:#4338ca}.danger{background:#fff1f2;color:#dc2626;border-color:#fecdd3}.danger:hover{background:#ffe4e6}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid #6366f1;outline-offset:2px}
+.wrap{max-width:1200px;margin:auto;padding:22px 16px 45px}.head{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:18px}.eyebrow{font-size:12px;color:#4f46e5;font-weight:800;margin:0 0 4px}.title{font-size:28px;margin:0}.sub{font-size:13px;color:#7b8495;margin:5px 0 0}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}.card,.panel{background:#fff;border:1px solid #e3e7ee;border-radius:16px;box-shadow:0 5px 20px #1720330b}.card{padding:16px;transition:box-shadow .15s,transform .15s}.card:hover{box-shadow:0 8px 26px #17203314;transform:translateY(-1px)}.icon{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#eef2ff;color:#4f46e5;font-weight:800}.label{font-size:12px;color:#7b8495;margin-top:10px}.value{font-size:23px;font-weight:800;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.panel{overflow:hidden}.panelhead{padding:15px 16px;border-bottom:1px solid #e7eaf0;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.panelhead h3{margin:0;font-size:16px}.hint{color:#7b8495;font-size:11px;margin:3px 0 0}.search{width:250px;max-width:100%;padding:9px 11px;border:1px solid #dfe3ea;border-radius:10px;outline:none;background:#f9fafb}.search:focus,input:focus,select:focus,textarea:focus{border-color:#6366f1;box-shadow:0 0 0 3px #6366f11c;outline:none}
+.groups{padding:15px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.g{border:1px solid #e4e8ef;border-radius:14px;padding:14px;transition:box-shadow .15s,transform .15s,border-color .15s}.g:hover{box-shadow:0 10px 26px #17203314;transform:translateY(-2px);border-color:#d7dcea}.gtitle{display:flex;justify-content:space-between;gap:8px}.gtitle b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.badge{border-radius:99px;padding:4px 8px;font-size:10px;font-weight:800;white-space:nowrap}.green{background:#ecfdf3;color:#07833f}.red{background:#fff1f2;color:#dc2626}.yellow{background:#fffbeb;color:#a16207}.blue{background:#eef2ff;color:#4f46e5}.gray{background:#f1f5f9;color:#64748b}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:12px 0}.metric{background:#f8fafc;border-radius:10px;padding:9px}.metric small{display:block;color:#7b8495;font-size:10px}.metric b{display:block;margin-top:3px;font-size:12px}.bar{height:7px;background:#eef1f5;border-radius:20px;overflow:hidden}.bar i{display:block;height:100%;background:#10b981;border-radius:20px;transition:width .3s ease}.empty{padding:45px 15px;text-align:center;color:#7b8495}.empty b{display:block;color:#334155;margin-bottom:4px}
+.hidden{display:none!important}.detailHead{display:flex;align-items:center;gap:10px;margin-bottom:18px}.back{width:40px;height:40px;padding:0}.summary{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}.sum{padding:14px;border:1px solid #e3e7ee;background:#fff;border-radius:14px;transition:box-shadow .15s}.sum:hover{box-shadow:0 6px 18px #17203312}.sum small{color:#7b8495}.sum b{display:block;font-size:17px;margin-top:5px}
+.scroll{overflow:auto;-webkit-overflow-scrolling:touch}.table{width:100%;border-collapse:separate;border-spacing:0;min-width:930px}.table th{background:#f8fafc;color:#687386;font-size:10px;text-transform:uppercase;letter-spacing:.04em;text-align:left;white-space:nowrap}.table th,.table td{padding:12px;border-bottom:1px solid #edf0f4}.table tr:hover td{background:#fafbfc}.table td{font-size:12px}.sticky{position:sticky;left:0;background:#fff;z-index:2;border-right:1px solid #edf0f4}.table th.sticky{background:#f8fafc}
+.smallbtn{border:1px solid #dfe3ea;background:#fff;border-radius:8px;padding:7px 9px;font-size:11px;font-weight:700;transition:background .15s}.smallbtn:hover{background:#f8fafc}.smallbtn.primary{background:#4f46e5;color:#fff;border-color:#4f46e5}.smallbtn.primary:hover{background:#4338ca}.smallbtn:disabled{opacity:.45;cursor:not-allowed}
+.status{border:1px solid transparent;border-radius:8px;padding:7px 22px 7px 9px;font-size:10px;font-weight:800;min-width:74px;cursor:pointer;text-align:left;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%23687386'/></svg>");background-repeat:no-repeat;background-position:right 8px center;transition:box-shadow .12s}.status:hover{box-shadow:0 0 0 2px #17203314}.status:focus-visible{border-color:#6366f1}.status.paid{background-color:#ecfdf3;color:#07833f}.status.partial{background-color:#fffbeb;color:#a16207}.status.unpaid{background-color:#fff1f2;color:#dc2626}
+.locked{background:#f1f5f9!important;color:#94a3b8!important;border-color:#e2e8f0!important}.winnercell{font-weight:700}.settingsbox{padding:12px 15px;background:#f8fafc;border-bottom:1px solid #e7eaf0;display:flex;gap:18px;flex-wrap:wrap;font-size:11px;color:#64748b}.settingsbox b{color:#334155}
+.modal{position:fixed;inset:0;z-index:50;background:#0f172a99;display:flex;align-items:center;justify-content:center;padding:15px;animation:fadeBg .15s ease}.dialog{width:100%;max-width:560px;max-height:94vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 25px 70px #0005;animation:pop .18s cubic-bezier(.2,.8,.3,1.1)}@keyframes fadeBg{from{opacity:0}to{opacity:1}}@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}.modalhead{padding:16px;border-bottom:1px solid #e7eaf0;display:flex;justify-content:space-between;align-items:center}.modalhead h3{margin:0;font-size:17px}.close{border:0;background:#f1f5f9;border-radius:9px;width:34px;height:34px;transition:background .15s}.close:hover{background:#e5e9f0}.form{padding:16px}.field{margin-bottom:13px}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;padding:10px 11px;border:1px solid #dfe3ea;border-radius:10px;background:#fff}.field textarea{min-height:75px;resize:vertical}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.modalfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:17px}.preview{background:#eef2ff;border:1px solid #dfe5ff;border-radius:12px;padding:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.preview small{font-size:10px;color:#4f46e5}.preview b{display:block;margin-top:3px;font-size:13px}.notice{font-size:11px;color:#4f46e5;background:#eef2ff;padding:10px;border-radius:10px;margin-bottom:14px}.warn{font-size:11px;color:#92400e;background:#fffbeb;padding:10px;border-radius:10px;margin-bottom:14px}
+.interval{display:grid;grid-template-columns:1fr 1fr;gap:12px}.radioRow{display:flex;gap:15px;flex-wrap:wrap}.radio{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600}.radio input{width:auto;box-shadow:none}
+.toastbox{position:fixed;right:14px;bottom:14px;z-index:100;display:flex;flex-direction:column;gap:7px}.toast{padding:11px 14px;border-radius:10px;background:#172033;color:#fff;font-size:12px;font-weight:700;box-shadow:0 8px 25px #0003;animation:in .2s ease}@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.repHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}.repHead h4{margin:0;font-size:15px}.repHead span{font-size:11px;color:#7b8495}.reptotal td{font-weight:800;background:#f8fafc}
+@media(max-width:1000px){.cards,.summary{grid-template-columns:repeat(3,1fr)}.groups{grid-template-columns:repeat(2,1fr)}}@media(max-width:700px){.cards,.summary{grid-template-columns:repeat(2,1fr)}.groups{grid-template-columns:1fr}.detailHead{align-items:flex-start;flex-wrap:wrap}.detailHead .actions{margin-left:auto}}
+@media(max-width:600px){.bar,.wrap{padding-left:11px;padding-right:11px}.brand p{display:none}.brand h1{font-size:16px}.logo{width:38px;height:38px}.actions .btn{padding:8px 10px;font-size:11px}.head{align-items:stretch;flex-direction:column}.title{font-size:23px}.cards,.summary{gap:8px}.card{padding:12px}.value{font-size:18px}.groups{padding:10px}.g{padding:11px}.panelhead{padding:12px}.search{width:100%}.grid2,.interval{grid-template-columns:1fr}.modal{padding:8px}.dialog{max-height:96vh}.table th,.table td{padding:9px}.sum{padding:11px}.sum b{font-size:15px}.preview{grid-template-columns:1fr}.settingsbox{gap:8px}}
+@media(max-width:390px){.cards,.summary{grid-template-columns:1fr}.actions{width:100%}.actions .btn{flex:1}.head>.primary{width:100%}}
+@media print{body *{visibility:hidden}#printArea,#printArea *{visibility:visible}#printArea{position:absolute;left:0;top:0;width:100%;padding:0;margin:0}.no-print{display:none!important}}
+</style>
+</head>
+<body>
+<header class="top"><div class="bar">
+<div class="brand"><div class="logo">₹</div><div><h1>Chit Fund Tracker</h1><p>100% offline • data saved on this device</p></div></div>
+<div class="actions"><button class="btn" id="globalReportsBtn">📊 Reports</button><button class="btn" id="exportBtn">↓ Export</button><label class="btn">↑ Import<input id="importInput" type="file" accept=".json,application/json" hidden></label></div>
+</div></header>
+
+<main class="wrap">
+<section id="dashboard">
+<div class="head"><div><p class="eyebrow">DASHBOARD</p><h2 class="title">Chit Fund Overview</h2><p class="sub">Manage groups, auctions and member collections locally.</p></div><button class="btn primary" id="addBtn">＋ Add Chit Group</button></div>
+<div class="cards">
+<div class="card"><span class="icon">▦</span><div class="label">Active Chit Groups</div><div class="value" id="sGroups">0</div></div>
+<div class="card"><span class="icon">♟</span><div class="label">Total Members</div><div class="value" id="sMembers">0</div></div>
+<div class="card"><span class="icon">₹</span><div class="label">Monthly Pool Value</div><div class="value" id="sPool">₹0</div></div>
+<div class="card"><span class="icon">✓</span><div class="label">Paid / Pending</div><div class="value" id="sPaid">₹0 / ₹0</div></div>
+</div>
+<div class="panel"><div class="panelhead"><div><h3>Active Chit Groups</h3><p class="hint">Choose a group to open its ledger.</p></div><input id="search" class="search" placeholder="Search groups..."></div><div id="groups" class="groups"></div></div>
+</section>
+
+<section id="details" class="hidden">
+<div class="detailHead"><button class="btn back" id="backBtn">←</button><div><p class="eyebrow">GROUP DETAILS</p><h2 class="title" id="dName"></h2><p class="sub" id="dMeta"></p></div><div class="actions"><button class="btn" id="reportsBtn">📄 Reports</button><button class="btn" id="editBtn">Edit</button><button class="btn danger" id="deleteBtn">Delete</button></div></div>
+<div id="summary" class="summary"></div>
+<div class="panel"><div class="panelhead"><div><h3>Monthly Auction & Ledger</h3><p class="hint">A member who has already won an auction is automatically unavailable for all later auctions.</p></div></div><div id="groupSettings" class="settingsbox"></div><div class="scroll"><table class="table"><thead><tr><th>Period</th><th>Winning Member</th><th>Bid / Discount</th><th>Commission</th><th>Dividend / Member</th><th>Net Payable</th><th>Action</th></tr></thead><tbody id="auctions"></tbody></table></div></div>
+<div class="panel" style="margin-top:18px"><div class="panelhead"><div><h3>Member Contribution Tracker</h3><p class="hint">Pick a status directly from the dropdown for each period — no accidental clicks.</p></div><div style="font-size:10px">🟢 Paid &nbsp; 🟡 Partial &nbsp; 🔴 Unpaid</div></div><div class="scroll"><table class="table" id="members"></table></div></div>
+</section>
+
+<section id="reports" class="hidden">
+<div class="detailHead"><button class="btn back" id="reportsBack">←</button><div><p class="eyebrow">REPORTS</p><h2 class="title" id="repTitle">Reports</h2><p class="sub" id="repSub">Generate printable reports.</p></div><div class="actions"><button class="btn primary" id="printReportBtn">🖨️ Print / Save PDF</button></div></div>
+<div class="panel"><div class="panelhead"><div><h3>Report Type</h3><p class="hint">Choose a report, then print or save it as a PDF from your browser's print dialog.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><select id="repType"></select><select id="repMember" class="hidden"></select></div></div>
+<div id="reportBody" style="padding:18px"><div id="printArea"></div></div>
+</div>
+</section>
+</main>
+
+<div class="modal hidden" id="groupModal"><div class="dialog"><div class="modalhead"><h3 id="gmTitle">Add Chit Group</h3><button class="close" data-close="groupModal">×</button></div><form class="form" id="groupForm"><input type="hidden" id="gid">
+<div class="field"><label>Group Name *</label><input id="gname" maxlength="80" required placeholder="Example: Family Chit 2026"></div>
+<div class="grid2"><div class="field"><label>Total Members *</label><input id="gcount" type="number" min="1" max="500" required placeholder="20"></div><div class="field"><label>Monthly Contribution (₹) *</label><input id="gamount" type="number" min="1" step="0.01" required placeholder="5000"></div>
+<div class="field"><label>Commission Percentage for This Chit *</label><input id="gcommission" type="number" min="0" max="100" step="0.01" required placeholder="5"></div>
+<div class="field"><label>Start Date *</label><input id="gdate" type="date" required></div></div>
+
+<div class="field"><label>Auction Interval *</label>
+<div class="radioRow">
+<label class="radio"><input type="radio" name="intervalType" value="monthly" checked> Monthly</label>
+<label class="radio"><input type="radio" name="intervalType" value="custom"> Custom interval</label>
+</div></div>
+
+<div id="customIntervalBox" class="interval hidden">
+<div class="field"><label>Interval Value *</label><input id="ginterval" type="number" min="1" max="120" value="1"></div>
+<div class="field"><label>Interval Unit *</label><select id="gunit"><option value="months">Months</option><option value="weeks">Weeks</option><option value="days">Days</option></select></div>
+</div>
+
+<div class="field"><label>Number of Auctions / Periods *</label><input id="gduration" type="number" min="1" max="500" required placeholder="20"></div>
+<div class="notice">Example: 20 auctions every 1 month = 20-month chit. You can also choose 2 months, 4 weeks, 30 days, etc. for the auction interval.</div>
+
+<div class="field"><label>Auction Reduction (Discount) Payout *</label>
+<div class="radioRow">
+<label class="radio"><input type="radio" name="payoutMode" value="all" checked> Share with all members</label>
+<label class="radio"><input type="radio" name="payoutMode" value="winnerFull"> Auction winners pay full amount</label>
+</div>
+<p class="hint" style="margin-top:6px">"Share with all members": the reduction (after commission) is divided as dividend across every member, including past winners.<br>"Auction winners pay full amount": members who have already won an auction pay their full monthly contribution with no dividend. The reduction is divided only among members who have not won yet (pending members).</p>
+</div>
+<div class="modalfoot"><button type="button" class="btn" data-close="groupModal">Cancel</button><button class="btn primary">Save Group</button></div></form></div></div>
+
+<div class="modal hidden" id="auctionModal"><div class="dialog"><div class="modalhead"><h3 id="amTitle">Record Auction</h3><button class="close" data-close="auctionModal">×</button></div><form class="form" id="auctionForm"><input type="hidden" id="amonth">
+<div class="notice" id="ameta"></div><div class="field"><label>Winning Member *</label><select id="winner" required></select></div>
+<div id="winnerWarning" class="warn hidden"></div>
+<div class="field"><label>Winning Bid / Discount Amount (₹) *</label><input id="discount" type="number" min="0" step="0.01" required placeholder="Example: 20000"></div>
+<div class="preview"><div><small>Dividend / Member</small><b id="pvDividend">₹0</b></div><div><small>Net Payable</small><b id="pvNet">₹0</b></div><div><small>Prize Amount</small><b id="pvPrize">₹0</b></div></div>
+<div class="notice hidden" id="pvNote"></div>
+<div class="modalfoot"><button type="button" class="btn" data-close="auctionModal">Cancel</button><button class="btn primary">Save Auction</button></div></form></div></div>
+
+<div class="modal hidden" id="memberModal"><div class="dialog"><div class="modalhead"><h3>Edit Member Details</h3><button class="close" data-close="memberModal">×</button></div><form class="form" id="memberForm"><input type="hidden" id="mid">
+<div class="field"><label>Member Name *</label><input id="mname" maxlength="80" required></div>
+<div class="field"><label>Address</label><textarea id="maddress" maxlength="300" placeholder="Member address"></textarea></div>
+<div class="grid2"><div class="field"><label>Phone</label><input id="mphone" type="tel" maxlength="25" placeholder="Phone number"></div><div class="field"><label>Email</label><input id="memail" type="email" maxlength="120" placeholder="email@example.com"></div></div>
+<div class="modalfoot"><button type="button" class="btn" data-close="memberModal">Cancel</button><button class="btn primary">Save Member</button></div></form></div></div>
+
+<div class="modal hidden" id="confirmModal"><div class="dialog"><div class="form"><h3 id="ctitle">Confirm</h3><p id="cmsg" class="sub"></p><div class="modalfoot"><button class="btn" id="cancelConfirm">Cancel</button><button class="btn danger" id="okConfirm">Confirm</button></div></div></div></div>
+<div class="toastbox" id="toastbox"></div>
+
+<script>
+(function(){
+"use strict";
+const KEY="offline_chit_fund_tracker_v3", DEFAULT_COMMISSION=5;
+let state=load(),selected=null,confirmFn=null;
+const $=id=>document.getElementById(id);
+
+function load(){try{let x=JSON.parse(localStorage.getItem(KEY)||'{"version":3,"groups":[]}');return x&&Array.isArray(x.groups)?x:{version:3,groups:[]}}catch(e){return{version:3,groups:[]}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){toast("Could not save — device storage may be full.","error")}}
+function uid(p){return p+"_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,8)}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function money(n){return new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:2}).format(Number(n)||0)}
+function fmtDate(s){if(!s)return"-";let d=new Date(s+"T00:00:00");return isNaN(d)?"-":d.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"})}
+function periodDate(g,i){
+ let d=new Date(g.startDate+"T00:00:00"),v=Number(g.intervalValue||1),u=g.intervalUnit||"months";
+ if(i>1){if(u==="days")d.setDate(d.getDate()+v*(i-1));else if(u==="weeks")d.setDate(d.getDate()+7*v*(i-1));else d.setMonth(d.getMonth()+v*(i-1))}
+ return d.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"});
+}
+function intervalText(g){let v=Number(g.intervalValue||1),u=g.intervalUnit||"months";if(u==="months"&&v===1)return"Monthly";return"Every "+v+" "+u.replace(/s$/,"")+(v===1?"":"s")}
+function group(id){return state.groups.find(g=>g.id===id)}
+function makeMembers(n){return Array.from({length:n},(_,i)=>({id:uid("m"),name:"Member "+(i+1),address:"",phone:"",email:"",contributions:{}}))}
+function makeAuctions(n){return Array.from({length:n},(_,i)=>({month:i+1,winnerId:"",discount:0,commission:0,dividend:0,netPayable:0,prizeAmount:0,recorded:false}))}
+function normalize(g){
+ g.memberCount=+g.memberCount||1;g.monthlyAmount=+g.monthlyAmount||0;g.duration=+g.duration||1;
+ g.commissionRate=g.commissionRate==null?DEFAULT_COMMISSION:+g.commissionRate;
+ g.winnerPaysFull=!!g.winnerPaysFull;
+ if(g.intervalType!=="custom")g.intervalType="monthly";
+ g.intervalValue=+g.intervalValue||1;g.intervalUnit=g.intervalUnit||"months";
+ if(!Array.isArray(g.members))g.members=[];
+ while(g.members.length<g.memberCount)g.members.push({id:uid("m"),name:"Member "+(g.members.length+1),address:"",phone:"",email:"",contributions:{}});
+ g.members=g.members.slice(0,g.memberCount);g.members.forEach((m,i)=>{m.name=m.name||"Member "+(i+1);m.address=m.address||"";m.phone=m.phone||"";m.email=m.email||"";if(!m.contributions)m.contributions={}});
+ if(!Array.isArray(g.auctions))g.auctions=[];
+ for(let i=1;i<=g.duration;i++)if(!g.auctions.some(a=>+a.month===i))g.auctions.push({month:i,winnerId:"",discount:0,commission:0,dividend:0,netPayable:0,prizeAmount:0,recorded:false});
+ g.auctions=g.auctions.filter(a=>+a.month<=g.duration).sort((a,b)=>a.month-b.month);
+ g.auctions.forEach(a=>{
+  if(a.pendingCount==null)a.pendingCount=pendingCountFor(g,a.month);
+  if(a.winnerPaysFull==null)a.winnerPaysFull=g.winnerPaysFull;
+  if(a.recorded&&(!a.commission||a.commission===0)&&g.commissionRate>0){let r=calc(g,a.discount,a.pendingCount);a.commission=r.commission;a.dividend=r.dividend;a.netPayable=r.net;a.prizeAmount=r.prize}
+ });
+}
+state.groups.forEach(normalize);save();
+
+function toast(msg,type){let x=document.createElement("div");x.className="toast";if(type==="error")x.style.background="#dc2626";else if(type==="warn")x.style.background="#a16207";x.textContent=msg;$("toastbox").appendChild(x);setTimeout(()=>x.remove(),2700)}
+function modal(id,on){$(id).classList.toggle("hidden",!on)}
+function calc(g,d,pendingCount){let pool=g.memberCount*g.monthlyAmount,commission=pool*(Number(g.commissionRate)||0)/100,discount=Math.max(0,Number(d)||0),pc=pendingCount==null?g.memberCount:Math.max(0,pendingCount),dividend=pc>0?Math.max(0,discount-commission)/pc:0;return{pool,commission,dividend,net:Math.max(0,g.monthlyAmount-dividend),prize:Math.max(0,pool-discount),pendingCount:pc}}
+function count(g,s){let n=0;g.members.forEach(m=>{for(let i=1;i<=g.duration;i++)if((m.contributions[i]||"unpaid")===s)n++});return n}
+
+function renderDash(){
+ let paid=0,pending=0,totalMembers=0,pool=0;
+ state.groups.forEach(g=>{normalize(g);totalMembers+=g.memberCount;pool+=g.memberCount*g.monthlyAmount;g.members.forEach(m=>{for(let i=1;i<=g.duration;i++){let s=m.contributions[i]||"unpaid";if(s==="paid")paid+=g.monthlyAmount;else if(s==="partial"){paid+=g.monthlyAmount/2;pending+=g.monthlyAmount/2}else pending+=g.monthlyAmount}})});
+ $("sGroups").textContent=state.groups.length;$("sMembers").textContent=totalMembers;$("sPool").textContent=money(pool);$("sPaid").textContent=money(paid)+" / "+money(pending);
+ let q=$("search").value.toLowerCase().trim(),arr=state.groups.filter(g=>g.name.toLowerCase().includes(q));
+ $("groups").innerHTML=arr.length?arr.map(g=>{
+   let done=g.auctions.filter(a=>a.recorded).length,total=g.memberCount*g.duration,paidCount=0;
+   g.members.forEach(m=>{for(let i=1;i<=g.duration;i++)if((m.contributions[i]||"unpaid")==="paid")paidCount++});
+   let pct=total?Math.round(paidCount/total*100):0;
+   return `<div class="g"><div class="gtitle"><b>${esc(g.name)}</b><span style="display:flex;gap:5px;flex-shrink:0"><span class="badge green">Active</span><span class="badge ${g.winnerPaysFull?"blue":"gray"}">${g.winnerPaysFull?"Winner Pays Full":"Shared Dividend"}</span></span></div>
+   <div class="sub">${g.memberCount} members • ${g.duration} auctions • ${intervalText(g)}</div>
+   <div class="metrics"><div class="metric"><small>Monthly Contribution</small><b>${money(g.monthlyAmount)}</b></div><div class="metric"><small>Pool</small><b>${money(g.memberCount*g.monthlyAmount)}</b></div><div class="metric"><small>Auctions</small><b>${done}/${g.duration}</b></div><div class="metric"><small>Commission</small><b>${g.commissionRate}%</b></div></div>
+   <div class="bar"><i style="width:${pct}%"></i></div><button class="btn primary" style="width:100%;margin-top:12px" data-view="${esc(g.id)}">View Group Details →</button></div>`
+ }).join(""):`<div class="empty" style="grid-column:1/-1"><b>${q?"No matching groups":"No chit groups yet"}</b>${q?"Try another search term.":"Create your first group to begin tracking."}</div>`;
+ document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>showDetails(b.dataset.view))
+}
+
+function showDetails(gid){
+ let g=group(gid);if(!g)return;normalize(g);selected=gid;$("dashboard").classList.add("hidden");$("details").classList.remove("hidden");
+ $("dName").textContent=g.name;$("dMeta").textContent=`${g.memberCount} members • ${g.duration} auctions • ${intervalText(g)} • Started ${fmtDate(g.startDate)}`;
+ let paid=count(g,"paid"),partial=count(g,"partial"),unpaid=count(g,"unpaid"),expected=g.memberCount*g.duration,paidVal=(paid+partial*.5)*g.monthlyAmount,pending=expected*g.monthlyAmount-paidVal,done=g.auctions.filter(a=>a.recorded).length;
+ $("summary").innerHTML=`<div class="sum"><small>Monthly Pool</small><b>${money(g.memberCount*g.monthlyAmount)}</b></div><div class="sum"><small>Auction Progress</small><b>${done}/${g.duration}</b></div><div class="sum"><small>Paid / Partial</small><b>${paid} / ${partial}</b></div><div class="sum"><small>Unpaid</small><b>${unpaid}</b></div><div class="sum"><small>Commission</small><b>${g.commissionRate}%</b></div>`;
+ $("groupSettings").innerHTML=`<span>Contribution: <b>${money(g.monthlyAmount)}</b></span><span>Pool: <b>${money(g.memberCount*g.monthlyAmount)}</b></span><span>Commission: <b>${g.commissionRate}%</b></span><span>Auction interval: <b>${intervalText(g)}</b></span><span>Reduction payout: <b>${g.winnerPaysFull?"Winners pay full — shared by pending members":"Shared by all members"}</b></span>`;
+ renderAuctions(g);renderMembers(g);
+}
+
+function priorWinners(g,month){let set=new Set();g.auctions.forEach(a=>{if(+a.month<month&&a.recorded&&a.winnerId)set.add(a.winnerId)});return set}
+function pendingCountFor(g,month){if(!g.winnerPaysFull)return g.memberCount;return Math.max(0,g.memberCount-priorWinners(g,month).size-1)}
+function renderAuctions(g){
+ $("auctions").innerHTML=g.auctions.map(a=>{
+   let w=g.members.find(m=>m.id===a.winnerId),fullMode=a.recorded&&a.winnerPaysFull;
+   let dividendCell=a.recorded?(fullMode?`${money(a.dividend)}<br><small style="color:#94a3b8">shared by ${a.pendingCount??g.memberCount} pending</small>`:money(a.dividend)):"—";
+   let netCell=a.recorded?(fullMode?`Pending: ${money(a.netPayable)}<br><small style="color:#94a3b8">Winners: ${money(g.monthlyAmount)} (full)</small>`:money(a.netPayable)):"—";
+   return `<tr><td><b>Auction ${a.month}</b><br><small style="color:#94a3b8">${periodDate(g,a.month)}</small></td>
+   <td>${w?`<span class="winnercell">${esc(w.name)}</span><br><span class="badge green">Winner</span>${fullMode?` <span class="badge blue">Pays Full</span>`:""}`:"<span style='color:#94a3b8'>Not recorded</span>"}</td>
+   <td>${a.recorded?money(a.discount):"—"}</td><td>${a.recorded?money(a.commission):"—"}</td><td>${dividendCell}</td><td>${netCell}</td>
+   <td><button class="smallbtn ${a.recorded?"":"primary"}" data-auction="${a.month}">${a.recorded?"Edit Auction":"Record Auction"}</button></td></tr>`
+ }).join("");
+ document.querySelectorAll("[data-auction]").forEach(b=>b.onclick=()=>openAuction(+b.dataset.auction))
+}
+function winMonth(g,mid){let a=g.auctions.find(x=>x.recorded&&x.winnerId===mid);return a?a.month:null}
+function renderMembers(g){
+ let months=Array.from({length:g.duration},(_,i)=>i+1);
+ $("members").innerHTML=`<thead><tr><th class="sticky">Member</th><th>Contact</th>${months.map(m=>`<th style="text-align:center">A${m}</th>`).join("")}</tr></thead><tbody>${g.members.map((m,ix)=>{
+ let contact=[m.phone,m.email].filter(Boolean).join(" • ")||"No contact",wm=winMonth(g,m.id);
+ let winBadge=wm?` <span class="badge blue" title="${g.winnerPaysFull?"Pays full monthly amount from this auction onward":"Won this auction"}">🏆 Won A${wm}${g.winnerPaysFull?" • Pays Full":""}</span>`:"";
+ return `<tr><td class="sticky"><b>${ix+1}. ${esc(m.name)}</b>${winBadge}<br><small style="color:#94a3b8">${esc(m.address||"No address")}</small> <button class="smallbtn" data-member="${esc(m.id)}">✎</button></td><td><small>${esc(contact)}</small></td>${months.map(mm=>{let s=m.contributions[mm]||"unpaid";return `<td style="text-align:center"><select class="status ${s}" data-status="${esc(m.id)}" data-month="${mm}"><option value="unpaid" ${s==="unpaid"?"selected":""}>Unpaid</option><option value="partial" ${s==="partial"?"selected":""}>Partial</option><option value="paid" ${s==="paid"?"selected":""}>Paid</option></select></td>`}).join("")}</tr>`
+ }).join("")}</tbody>`;
+ document.querySelectorAll("[data-status]").forEach(sel=>sel.onchange=()=>{setStatus(sel.dataset.status,+sel.dataset.month,sel.value)});document.querySelectorAll("[data-member]").forEach(b=>b.onclick=()=>openMember(b.dataset.member))
+}
+
+function openGroup(g){
+ $("groupForm").reset();$("gid").value=g?.id||"";$("gmTitle").textContent=g?"Edit Chit Group":"Add Chit Group";
+ document.querySelector('input[name="intervalType"][value="monthly"]').checked=true;$("customIntervalBox").classList.add("hidden");
+ document.querySelector('input[name="payoutMode"][value="all"]').checked=true;
+ if(g){$("gname").value=g.name;$("gcount").value=g.memberCount;$("gamount").value=g.monthlyAmount;$("gcommission").value=g.commissionRate;$("gduration").value=g.duration;$("gdate").value=g.startDate;
+   if(g.intervalType==="custom"){document.querySelector('input[name="intervalType"][value="custom"]').checked=true;$("customIntervalBox").classList.remove("hidden");$("ginterval").value=g.intervalValue;$("gunit").value=g.intervalUnit}
+   if(g.winnerPaysFull)document.querySelector('input[name="payoutMode"][value="winnerFull"]').checked=true;
+ }else{$("gcommission").value=DEFAULT_COMMISSION;$("ginterval").value=1;$("gunit").value="months";$("gdate").value=new Date().toISOString().slice(0,10)}
+ modal("groupModal",1)
+}
+document.querySelectorAll('input[name="intervalType"]').forEach(r=>r.onchange=()=>{$("customIntervalBox").classList.toggle("hidden",document.querySelector('input[name="intervalType"]:checked').value!=="custom")});
+$("groupForm").onsubmit=e=>{
+ e.preventDefault();let gid=$("gid").value.trim(),name=$("gname").value.trim(),mc=+$("gcount").value,amt=+$("gamount").value,commission=+$("gcommission").value,dur=+$("gduration").value,date=$("gdate").value,type=document.querySelector('input[name="intervalType"]:checked').value,v=type==="monthly"?1:+$("ginterval").value,u=type==="monthly"?"months":$("gunit").value,winnerPaysFull=document.querySelector('input[name="payoutMode"]:checked').value==="winnerFull";
+ if(!name||![mc,amt,commission,dur,v].every(isFinite)||mc<1||mc>500||amt<=0||commission<0||commission>100||dur<1||dur>500||!date||v<1)return toast("Please enter valid group details.","error");
+ if(gid){
+  let g=group(gid);
+  if(mc<g.memberCount){
+   let affected=g.members.slice(mc).some(m=>Object.keys(m.contributions||{}).length||g.auctions.some(a=>a.recorded&&a.winnerId===m.id));
+   if(affected)return toast(`Can't reduce members below ${g.memberCount} — later members already have contribution or auction records.`,"error");
+  }
+  if(dur<g.duration&&g.auctions.some(a=>+a.month>dur&&a.recorded))return toast(`Can't reduce auctions below ${g.duration} — later auctions already have recorded data.`,"error");
+  g.name=name;g.memberCount=mc;g.monthlyAmount=amt;g.commissionRate=commission;g.duration=dur;g.startDate=date;g.intervalType=type;g.intervalValue=v;g.intervalUnit=u;g.winnerPaysFull=winnerPaysFull;normalize(g);save();modal("groupModal",0);toast("Group updated");renderDash();showDetails(gid)
+ }
+ else{let g={id:uid("g"),name,memberCount:mc,monthlyAmount:amt,commissionRate:commission,duration:dur,startDate:date,intervalType:type,intervalValue:v,intervalUnit:u,winnerPaysFull,createdAt:new Date().toISOString(),members:makeMembers(mc),auctions:makeAuctions(dur)};state.groups.push(g);save();modal("groupModal",0);toast("Group created");renderDash();showDetails(g.id)}
+};
+
+function openAuction(month){
+ let g=group(selected),a=g.auctions.find(x=>+x.month===month);if(!a)return;
+ let previous=priorWinners(g,month),currentWinner=a.winnerId,pc=pendingCountFor(g,month);
+ $("amonth").value=month;$("amTitle").textContent=(a.recorded?"Edit":"Record")+" Auction — "+month;
+ $("ameta").textContent=`${periodDate(g,month)} • Pool ${money(g.memberCount*g.monthlyAmount)} • Commission ${g.commissionRate}% (${money(calc(g,a.discount,pc).commission)})`+(g.winnerPaysFull?` • Winner pays full ${money(g.monthlyAmount)}; reduction shared with ${pc} pending member${pc===1?"":"s"}`:"");
+ let options=g.members.map(m=>{let disabled=previous.has(m.id)&&m.id!==currentWinner;return `<option value="${esc(m.id)}" ${m.id===currentWinner?"selected":""} ${disabled?"disabled":""}>${esc(m.name)}${disabled?" — already won":""}</option>`}).join("");
+ $("winner").innerHTML=`<option value="">Select winning member</option>`+options;
+ if(previous.size){$("winnerWarning").classList.remove("hidden");$("winnerWarning").textContent="Members who have already won a previous auction are disabled. The existing winner remains selectable when editing this auction."}else $("winnerWarning").classList.add("hidden");
+ $("discount").value=a.recorded?a.discount:"";preview();modal("auctionModal",1)
+}
+function preview(){
+ let g=group(selected),month=+$("amonth").value,pc=pendingCountFor(g,month),r=calc(g,$("discount").value,pc);
+ $("pvDividend").textContent=money(r.dividend);$("pvNet").textContent=money(r.net);$("pvPrize").textContent=money(r.prize);
+ let note=$("pvNote");
+ if(g.winnerPaysFull){note.classList.remove("hidden");note.textContent=`Auction winner (and any earlier winners) pay the full ${money(g.monthlyAmount)} this period. The dividend of ${money(r.dividend)} is shared only among the ${pc} member${pc===1?"":"s"} who haven't won yet.`}
+ else note.classList.add("hidden");
+}
+$("discount").oninput=preview;
+$("auctionForm").onsubmit=e=>{
+ e.preventDefault();let g=group(selected),month=+$("amonth").value,w=$("winner").value,d=+$("discount").value,a=g.auctions.find(x=>+x.month===month),previous=priorWinners(g,month);
+ if(!w||!isFinite(d)||d<0||d>g.memberCount*g.monthlyAmount)return toast("Enter a valid member and discount.","error");
+ if(previous.has(w)&&w!==a.winnerId)return toast("This member has already won an earlier auction.","error");
+ let pc=pendingCountFor(g,month),r=calc(g,d,pc);Object.assign(a,{winnerId:w,discount:d,commission:r.commission,dividend:r.dividend,netPayable:r.net,prizeAmount:r.prize,pendingCount:pc,winnerPaysFull:g.winnerPaysFull,recorded:true});save();modal("auctionModal",0);toast("Auction saved");showDetails(selected);renderDash()
+};
+
+function openMember(mid){let g=group(selected),m=g.members.find(x=>x.id===mid);if(!m)return;$("mid").value=mid;$("mname").value=m.name;$("maddress").value=m.address||"";$("mphone").value=m.phone||"";$("memail").value=m.email||"";modal("memberModal",1)}
+$("memberForm").onsubmit=e=>{e.preventDefault();let m=group(selected).members.find(x=>x.id===$("mid").value),n=$("mname").value.trim(),phone=$("mphone").value.trim(),email=$("memail").value.trim();if(!n)return toast("Member name is required.","error");if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return toast("Enter a valid email.","error");m.name=n;m.address=$("maddress").value.trim();m.phone=phone;m.email=email;save();modal("memberModal",0);toast("Member details updated");showDetails(selected);renderDash()};
+function setStatus(mid,month,value){let m=group(selected).members.find(x=>x.id===mid);if(!m)return;m.contributions[month]=value;save();showDetails(selected);renderDash()}
+
+$("addBtn").onclick=()=>openGroup();$("search").oninput=renderDash;
+$("backBtn").onclick=()=>{$("details").classList.add("hidden");$("dashboard").classList.remove("hidden");renderDash()};
+$("editBtn").onclick=()=>openGroup(group(selected));
+$("deleteBtn").onclick=()=>{let g=group(selected);confirm("Delete Chit Group?",`Delete "${g.name}" and all its records?`,()=>{state.groups=state.groups.filter(x=>x.id!==selected);save();closeConfirm();$("backBtn").click();toast("Group deleted")})};
+
+/* ---------- Reports ---------- */
+let reportsGroupId=null;
+function memberPending(g,m){let paid=0,pending=0;for(let i=1;i<=g.duration;i++){let s=m.contributions[i]||"unpaid";if(s==="paid")paid+=g.monthlyAmount;else if(s==="partial"){paid+=g.monthlyAmount/2;pending+=g.monthlyAmount/2}else pending+=g.monthlyAmount}return{paid,pending}}
+function repHead(title,sub){return `<div class="repHead"><div><h4>${esc(title)}</h4><p class="hint" style="margin-top:4px">${esc(sub)}</p></div><span>Generated ${esc(new Date().toLocaleString("en-IN"))}</span></div>`}
+function reportAllGroups(){
+ let rows=state.groups.map(g=>{normalize(g);let paid=0,pending=0;g.members.forEach(m=>{let r=memberPending(g,m);paid+=r.paid;pending+=r.pending});let done=g.auctions.filter(a=>a.recorded).length;
+  return `<tr><td><b>${esc(g.name)}</b></td><td>${g.memberCount}</td><td>${g.duration}</td><td>${money(g.monthlyAmount)}</td><td>${money(g.memberCount*g.monthlyAmount)}</td><td>${done}/${g.duration}</td><td>${money(paid)}</td><td>${money(pending)}</td></tr>`
+ }).join("");
+ if(!state.groups.length)return repHead("All Groups Overview","No chit groups yet.")+`<div class="empty"><b>No chit groups yet</b>Create a group from the dashboard to see reports.</div>`;
+ return repHead("All Groups Overview","Summary across every chit group tracked on this device.")+
+ `<div class="scroll"><table class="table"><thead><tr><th>Group</th><th>Members</th><th>Auctions</th><th>Monthly</th><th>Pool</th><th>Progress</th><th>Collected</th><th>Pending</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function reportGroupOverview(g){
+ let paid=0,pending=0;g.members.forEach(m=>{let r=memberPending(g,m);paid+=r.paid;pending+=r.pending});let done=g.auctions.filter(a=>a.recorded).length;
+ return repHead("Group Overview — "+g.name,"Key settings and progress for this chit group.")+
+ `<div class="summary" style="margin-bottom:0">
+ <div class="sum"><small>Monthly Contribution</small><b>${money(g.monthlyAmount)}</b></div>
+ <div class="sum"><small>Pool Value</small><b>${money(g.memberCount*g.monthlyAmount)}</b></div>
+ <div class="sum"><small>Members</small><b>${g.memberCount}</b></div>
+ <div class="sum"><small>Auction Progress</small><b>${done}/${g.duration}</b></div>
+ <div class="sum"><small>Commission</small><b>${g.commissionRate}%</b></div>
+ <div class="sum"><small>Auction Interval</small><b>${intervalText(g)}</b></div>
+ <div class="sum"><small>Start Date</small><b>${fmtDate(g.startDate)}</b></div>
+ <div class="sum"><small>Reduction Payout</small><b>${g.winnerPaysFull?"Winners pay full":"Shared by all"}</b></div>
+ <div class="sum"><small>Collected So Far</small><b>${money(paid)}</b></div>
+ <div class="sum"><small>Pending</small><b>${money(pending)}</b></div>
+ </div>`;
+}
+function reportAuctionSummary(g){
+ let totalDiscount=0,totalCommission=0,totalDividend=0;
+ let rows=g.auctions.map(a=>{
+  let w=g.members.find(m=>m.id===a.winnerId);
+  if(a.recorded){totalDiscount+=a.discount;totalCommission+=a.commission;totalDividend+=a.dividend*(a.pendingCount??g.memberCount)}
+  return `<tr><td>Auction ${a.month}<br><small style="color:#94a3b8">${periodDate(g,a.month)}</small></td><td>${w?esc(w.name):"—"}</td><td>${a.recorded?money(a.discount):"—"}</td><td>${a.recorded?money(a.commission):"—"}</td><td>${a.recorded?money(a.dividend):"—"}</td><td>${a.recorded?money(a.netPayable):"—"}</td><td>${a.recorded?"Recorded":"Pending"}</td></tr>`
+ }).join("");
+ return repHead("Auction Summary — "+g.name,"All recorded and pending auctions for this group.")+
+ `<div class="scroll"><table class="table"><thead><tr><th>Period</th><th>Winner</th><th>Discount</th><th>Commission</th><th>Dividend</th><th>Net Payable</th><th>Status</th></tr></thead><tbody>${rows}
+ <tr class="reptotal"><td colspan="2">Totals</td><td>${money(totalDiscount)}</td><td>${money(totalCommission)}</td><td>${money(totalDividend)}</td><td colspan="2"></td></tr>
+ </tbody></table></div>`;
+}
+function reportMemberLedger(g){
+ let months=Array.from({length:g.duration},(_,i)=>i+1);
+ let rows=g.members.map((m,ix)=>`<tr><td class="sticky">${ix+1}. ${esc(m.name)}</td>${months.map(mm=>{let s=m.contributions[mm]||"unpaid";return `<td style="text-align:center">${s==="paid"?"🟢":s==="partial"?"🟡":"🔴"}</td>`}).join("")}</tr>`).join("");
+ return repHead("Member Ledger — "+g.name,"Contribution status of every member across all auction periods.")+
+ `<div class="scroll"><table class="table"><thead><tr><th class="sticky">Member</th>${months.map(m=>`<th style="text-align:center">A${m}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>
+ <p class="hint" style="margin-top:10px">🟢 Paid &nbsp; 🟡 Partial &nbsp; 🔴 Unpaid</p>`;
+}
+function reportDues(g){
+ let rows=g.members.map(m=>{let r=memberPending(g,m);return{m,...r}}).sort((a,b)=>b.pending-a.pending);
+ let total=rows.reduce((s,r)=>s+r.pending,0);
+ let body=rows.map(r=>`<tr><td>${esc(r.m.name)}</td><td>${esc([r.m.phone,r.m.email].filter(Boolean).join(" • ")||"No contact")}</td><td>${money(r.paid)}</td><td>${money(r.pending)}</td></tr>`).join("");
+ return repHead("Outstanding Dues — "+g.name,"Members sorted by pending amount, highest first.")+
+ `<div class="scroll"><table class="table"><thead><tr><th>Member</th><th>Contact</th><th>Collected</th><th>Pending</th></tr></thead><tbody>${body||`<tr><td colspan="4" style="text-align:center;color:#7b8495">No members</td></tr>`}
+ <tr class="reptotal"><td colspan="3">Total Pending</td><td>${money(total)}</td></tr></tbody></table></div>`;
+}
+function reportMemberStatement(g,mid){
+ let m=g.members.find(x=>x.id===mid);if(!m)return `<div class="empty"><b>No member selected</b></div>`;
+ let r=memberPending(g,m),wm=winMonth(g,m.id);
+ let rows=Array.from({length:g.duration},(_,i)=>i+1).map(mm=>{
+  let s=m.contributions[mm]||"unpaid",w=g.auctions.find(a=>+a.month===mm),wn=w&&w.winnerId?g.members.find(x=>x.id===w.winnerId):null,amt=s==="paid"?g.monthlyAmount:s==="partial"?g.monthlyAmount/2:0,due=g.monthlyAmount-amt;
+  return `<tr><td>Auction ${mm}<br><small style="color:#94a3b8">${periodDate(g,mm)}</small></td><td>${s==="paid"?"Paid":s==="partial"?"Partial":"Unpaid"}</td><td>${money(amt)}</td><td>${money(due)}</td><td>${wn?esc(wn.name)+(wn.id===m.id?" (this member)":""):"—"}</td></tr>`
+ }).join("");
+ return repHead("Member Statement — "+m.name,g.name+(wm?` • Won Auction ${wm}`:""))+
+ `<div class="summary" style="margin-bottom:14px;grid-template-columns:repeat(3,1fr)">
+ <div class="sum"><small>Contact</small><b style="font-size:13px">${esc([m.phone,m.email].filter(Boolean).join(" • ")||"—")}</b></div>
+ <div class="sum"><small>Total Collected</small><b>${money(r.paid)}</b></div>
+ <div class="sum"><small>Total Pending</small><b>${money(r.pending)}</b></div>
+ </div>
+ <div class="scroll"><table class="table"><thead><tr><th>Period</th><th>Status</th><th>Amount Paid</th><th>Amount Due</th><th>Period Winner</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function renderReport(){
+ let type=$("repType").value,memberSel=$("repMember");
+ memberSel.classList.toggle("hidden",type!=="statement");
+ let html="";
+ if(!reportsGroupId){html=reportAllGroups()}
+ else{
+  let g=group(reportsGroupId);if(!g){html="";}
+  else{
+   if(type==="statement"){
+    if(!memberSel.dataset.filled||memberSel.dataset.filled!==g.id){memberSel.innerHTML=g.members.map(m=>`<option value="${esc(m.id)}">${esc(m.name)}</option>`).join("");memberSel.dataset.filled=g.id;memberSel.onchange=renderReport}
+    html=reportMemberStatement(g,memberSel.value||g.members[0]?.id)
+   }
+   else if(type==="auctions")html=reportAuctionSummary(g);
+   else if(type==="ledger")html=reportMemberLedger(g);
+   else if(type==="dues")html=reportDues(g);
+   else html=reportGroupOverview(g);
+  }
+ }
+ $("printArea").innerHTML=html;
+}
+function openReports(gid){
+ reportsGroupId=gid||null;
+ let typeSel=$("repType");
+ if(reportsGroupId){
+  let g=group(reportsGroupId);if(!g)return;
+  $("repTitle").textContent="Reports — "+g.name;$("repSub").textContent="Printable reports for this chit group.";
+  typeSel.innerHTML=`<option value="overview">Group Overview</option><option value="auctions">Auction Summary</option><option value="ledger">Member Ledger</option><option value="dues">Outstanding Dues</option><option value="statement">Member Statement</option>`;
+ }else{
+  $("repTitle").textContent="Reports — All Groups";$("repSub").textContent="Printable summary across all chit groups.";
+  typeSel.innerHTML=`<option value="allgroups">All Groups Overview</option>`;
+ }
+ $("dashboard").classList.add("hidden");$("details").classList.add("hidden");$("reports").classList.remove("hidden");
+ renderReport()
+}
+$("repType").onchange=renderReport;
+$("globalReportsBtn").onclick=()=>openReports(null);
+$("reportsBtn").onclick=()=>openReports(selected);
+$("reportsBack").onclick=()=>{$("reports").classList.add("hidden");if(reportsGroupId){$("details").classList.remove("hidden")}else{$("dashboard").classList.remove("hidden");renderDash()}};
+$("printReportBtn").onclick=()=>window.print();
+/* ---------- /Reports ---------- */
+
+function confirm(t,m,fn){$("ctitle").textContent=t;$("cmsg").textContent=m;confirmFn=fn;modal("confirmModal",1)}
+function closeConfirm(){confirmFn=null;modal("confirmModal",0)}
+$("cancelConfirm").onclick=closeConfirm;$("okConfirm").onclick=()=>{let f=confirmFn;if(f)f()};
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>modal(b.dataset.close,0));
+document.querySelectorAll(".modal").forEach(m=>m.onclick=e=>{if(e.target===m)modal(m.id,0)});
+document.onkeydown=e=>{if(e.key==="Escape"){document.querySelectorAll(".modal:not(.hidden)").forEach(m=>modal(m.id,0));closeConfirm()}};
+
+$("exportBtn").onclick=()=>{
+ let b=new Blob([JSON.stringify({app:"Offline Chit Fund Tracker",version:3,exportedAt:new Date().toISOString(),data:state},null,2)],{type:"application/json"}),a=document.createElement("a");
+ a.href=URL.createObjectURL(b);a.download="chit-fund-backup-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast("Backup exported")
+};
+$("importInput").onchange=e=>{
+ let f=e.target.files[0];if(!f)return;let r=new FileReader;r.onload=()=>{
+ try{let x=JSON.parse(r.result),d=x.data||x;if(!d||!Array.isArray(d.groups))throw 0;
+ confirm("Import Backup?","This will replace current browser data.",()=>{state={version:3,groups:d.groups};state.groups.forEach(normalize);save();closeConfirm();selected=null;$("backBtn").click();toast("Backup imported")})
+ }catch(_){toast("Invalid JSON backup.","error")}e.target.value=""};r.readAsText(f)
+};
+renderDash();
+})();
+</script>
+</body>
+</html>
