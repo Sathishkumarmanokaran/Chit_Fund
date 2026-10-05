@@ -1531,13 +1531,165 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     grid-template-columns: 1fr;
     padding: 12px;
   }
-  .member-cards-grid {
+  .member-cards-grid,
+  .loan-cards-grid {
     grid-template-columns: 1fr;
     padding: 10px;
   }
   .search-wrapper {
     width: 100%;
   }
+}
+
+/* ==================== MONEY LENDING MODULE STYLES ==================== */
+.module-switcher {
+  display: inline-flex;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+  max-width: 100%;
+  overflow-x: auto;
+}
+.module-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+.module-btn:hover {
+  color: var(--text-main);
+  background: var(--bg-card-hover);
+}
+.module-btn.active {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 4px 14px var(--primary-glow);
+}
+.module-badge {
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  color: currentColor;
+  font-family: var(--font-mono);
+}
+
+.loan-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+  padding: 16px;
+}
+.loan-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  position: relative;
+}
+.loan-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-md);
+}
+.loan-card.overdue {
+  border-color: rgba(239, 68, 68, 0.4);
+}
+.loan-card.closed {
+  opacity: 0.85;
+}
+.loan-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+.loan-borrower-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.loan-borrower-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.loan-metrics-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  background: var(--bg-surface);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+}
+.loan-metric-item {
+  display: flex;
+  flex-direction: column;
+}
+.loan-metric-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  letter-spacing: 0.03em;
+}
+.loan-metric-val {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-top: 2px;
+}
+.loan-security-badge {
+  font-size: 11px;
+  background: var(--bg-surface);
+  border: 1px dashed var(--border-subtle);
+  padding: 5px 10px;
+  border-radius: var(--radius-xs);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.loan-actions-bar {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+}
+.loan-actions-bar .btn {
+  flex: 1;
+  min-width: 90px;
+  font-size: 12px;
+  padding: 7px 10px;
 }
 </style>
 </head>
@@ -1557,6 +1709,12 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
       </div>
     </div>
     <div class="top-actions">
+      <button class="btn btn-sm hide-mobile" id="navChitsBtn">
+        <span>🏢 Chit Fund</span>
+      </button>
+      <button class="btn btn-sm hide-mobile" id="navLoansBtn" style="border-color:var(--gold);color:var(--gold)">
+        <span>💰 Money Lending</span>
+      </button>
       <button class="btn btn-sm hide-mobile" id="navBackupBtn">
         <span>☁️ Backup & Sync</span>
       </button>
@@ -1578,6 +1736,20 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
   <!-- ==================== DASHBOARD SECTION ==================== -->
   <section id="dashSection">
+    <!-- BUSINESS MODULE SWITCHER -->
+    <div class="module-switcher">
+      <button class="module-btn active" data-modtab="chits">
+        <span class="module-icon">🏢</span>
+        <span class="module-label">Chit Fund Tracker</span>
+        <span class="module-badge" id="badgeModuleChitCount">0</span>
+      </button>
+      <button class="module-btn" data-modtab="loans">
+        <span class="module-icon">💰</span>
+        <span class="module-label">Money Lending (Interest)</span>
+        <span class="module-badge" id="badgeModuleLoanCount">0</span>
+      </button>
+    </div>
+
     <div class="header-banner">
       <div>
         <p class="eyebrow">DASHBOARD</p>
@@ -1652,6 +1824,124 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
       </div>
       <div class="groups-grid" id="groupsListContainer">
         <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== MONEY LENDING & INTEREST SECTION ==================== -->
+  <section id="loansSection" class="hidden">
+    <!-- BUSINESS MODULE SWITCHER -->
+    <div class="module-switcher">
+      <button class="module-btn" data-modtab="chits">
+        <span class="module-icon">🏢</span>
+        <span class="module-label">Chit Fund Tracker</span>
+        <span class="module-badge" id="badgeModuleChitCount2">0</span>
+      </button>
+      <button class="module-btn active" data-modtab="loans">
+        <span class="module-icon">💰</span>
+        <span class="module-label">Money Lending (Interest)</span>
+        <span class="module-badge" id="badgeModuleLoanCount2">0</span>
+      </button>
+    </div>
+
+    <div class="header-banner">
+      <div>
+        <p class="eyebrow">PRIVATE FINANCE & INTEREST LEDGER</p>
+        <h1 class="page-title">Money Lending & Loans</h1>
+        <p class="page-subtitle">Track simple & reducing monthly interest (வட்டி), principal repayments, borrower ledgers, and WhatsApp receipts.</p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="btnLoanReports" title="Open Money Lending & Interest Portfolio Reports">
+          <span>📊 Lending Reports</span>
+        </button>
+        <button class="btn" id="btnLoadSampleLoans" title="Load sample loans to test features">
+          <span>✨ Load Sample Loans</span>
+        </button>
+        <button class="btn btn-primary" id="btnAddLoan">
+          <span>＋ Issue New Loan</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- STATS KPI GRID FOR LOANS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">Total Capital Lent</span>
+          <div class="stat-icon gold">💼</div>
+        </div>
+        <div class="stat-value mono" id="kpiLoanTotalLent">₹0</div>
+        <div class="stat-foot">
+          <span id="kpiLoanTotalCount">0 loans disbursed</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">Active Outstanding Principal</span>
+          <div class="stat-icon">💰</div>
+        </div>
+        <div class="stat-value mono" id="kpiLoanActivePrincipal" style="color:var(--gold)">₹0</div>
+        <div class="stat-foot">
+          <span id="kpiLoanActiveCount">0 active borrowers</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">Interest Profit Collected</span>
+          <div class="stat-icon green">📈</div>
+        </div>
+        <div class="stat-value mono" id="kpiLoanInterestCollected" style="color:var(--success)">₹0</div>
+        <div class="stat-foot">
+          <span>Total interest earned</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">Pending Interest Due</span>
+          <div class="stat-icon yellow">⚠️</div>
+        </div>
+        <div class="stat-value mono" id="kpiLoanPendingInterest" style="color:var(--danger)">₹0</div>
+        <div class="stat-foot">
+          <span id="kpiLoanOverdueCount">0 overdue</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOANS PANEL -->
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title">Borrower Loan Accounts</h2>
+          <p class="panel-hint">Record interest receipts or principal reductions. View borrower passbook statements anytime.</p>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <div class="search-wrapper" style="width:220px">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="loanSearchInput" class="search-input" placeholder="Search borrower, phone...">
+          </div>
+          <div class="filter-tabs" id="loanFilterTabs">
+            <button class="filter-tab active" data-lfilter="all">All Loans (<span id="lcntAll">0</span>)</button>
+            <button class="filter-tab" data-lfilter="active">Active (<span id="lcntActive">0</span>)</button>
+            <button class="filter-tab" data-lfilter="overdue">⚠️ Overdue (<span id="lcntOverdue">0</span>)</button>
+            <button class="filter-tab" data-lfilter="closed">✅ Closed (<span id="lcntClosed">0</span>)</button>
+          </div>
+          <div class="view-switch">
+            <button class="view-btn active" id="loanViewCardsBtn" title="Cards View">🗂️ Cards</button>
+            <button class="view-btn" id="loanViewTableBtn" title="Table View">📑 Table</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- LOAN CARDS VIEW -->
+      <div id="loanCardsView" class="loan-cards-grid">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- LOAN TABLE VIEW -->
+      <div id="loanTableView" class="table-scroll hidden">
+        <table class="data-table" id="loanFullTable">
+          <!-- Rendered dynamically -->
+        </table>
       </div>
     </div>
   </section>
@@ -1830,6 +2120,9 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
           <button class="rep-tab-btn" data-reptab="statement">
             <span>👤 4. Individual Member Statement</span>
           </button>
+          <button class="rep-tab-btn" data-reptab="lending">
+            <span>💰 5. Money Lending & Interest Portfolio</span>
+          </button>
         </div>
       </div>
 
@@ -1849,21 +2142,21 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     <span class="bnav-icon">🏠</span>
     <span>Home</span>
   </button>
+  <button class="bnav-item" id="bnavLoans">
+    <span class="bnav-icon">💰</span>
+    <span>Loans</span>
+  </button>
   <button class="bnav-item" id="bnavLedger">
     <span class="bnav-icon">👥</span>
     <span>Ledger</span>
-  </button>
-  <button class="bnav-item" id="bnavBackup">
-    <span class="bnav-icon">☁️</span>
-    <span>Backup</span>
   </button>
   <button class="bnav-item" id="bnavReports">
     <span class="bnav-icon">📊</span>
     <span>Reports</span>
   </button>
-  <button class="bnav-item" id="bnavTheme">
-    <span class="bnav-icon" id="bnavThemeIcon">☀️</span>
-    <span>Theme</span>
+  <button class="bnav-item" id="bnavBackup">
+    <span class="bnav-icon">☁️</span>
+    <span>Backup</span>
   </button>
 </nav>
 
@@ -2411,6 +2704,340 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   </div>
 </div>
 
+<!-- ==================== MODAL: ISSUE / EDIT LOAN ==================== -->
+<div class="modal-overlay hidden" id="loanModal">
+  <div class="modal-dialog">
+    <div class="sheet-handle"></div>
+    <div class="modal-head">
+      <h3 id="loanModalTitle">Issue New Loan</h3>
+      <button class="modal-close" data-close="loanModal">✕</button>
+    </div>
+    <form id="loanForm" novalidate>
+      <div class="modal-body">
+        <input type="hidden" id="loanFormId">
+        
+        <div class="form-group">
+          <label class="form-label" for="loanBorrowerName">Borrower Full Name *</label>
+          <input type="text" id="loanBorrowerName" list="chitMembersDatalist" class="form-input" required maxlength="80" placeholder="e.g. Ramesh Kumar">
+          <datalist id="chitMembersDatalist"></datalist>
+          <p class="form-help">Type borrower name or choose from your existing Chit Fund members.</p>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="loanBorrowerPhone">Mobile Phone (for WhatsApp)</label>
+            <input type="tel" id="loanBorrowerPhone" class="form-input" maxlength="25" placeholder="e.g. 9876543210">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="loanLinkedMember">Linked Chit Member (Optional)</label>
+            <select id="loanLinkedMember" class="form-select">
+              <option value="">-- Not Linked to Chit Group --</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="loanBorrowerAddress">Borrower Address / Location</label>
+          <input type="text" id="loanBorrowerAddress" class="form-input" maxlength="160" placeholder="e.g. 14, Gandhi Road, Salem">
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="loanPrincipal">Principal Loan Amount (₹) *</label>
+            <input type="number" id="loanPrincipal" class="form-input" min="100" step="any" required placeholder="50000">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="loanDisbursedDate">Loan Disbursement Date *</label>
+            <input type="date" id="loanDisbursedDate" class="form-input" required>
+          </div>
+        </div>
+
+        <!-- LOAN TYPE / INTEREST MODEL -->
+        <div class="form-group">
+          <label class="form-label">Loan Model *</label>
+          <div class="radio-pill-group">
+            <label class="radio-pill">
+              <input type="radio" name="loanType" value="monthly_interest" checked>
+              <span>Monthly Interest (வட்டி - Simple / Reducing Balance)</span>
+            </label>
+            <label class="radio-pill">
+              <input type="radio" name="loanType" value="emi">
+              <span>Fixed EMI / Installments</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- MONTHLY INTEREST FIELDS -->
+        <div id="monthlyInterestFields" class="form-group">
+          <label class="form-label" for="loanInterestRate">Monthly Interest Rate (% per month / ₹ vatti) *</label>
+          <div style="display:flex;align-items:center;gap:10px">
+            <input type="number" id="loanInterestRate" class="form-input" min="0" max="100" step="any" value="2" placeholder="e.g. 2 for ₹2 vatti / 2% per month">
+            <span style="font-weight:700;color:var(--text-muted);white-space:nowrap">% / month</span>
+          </div>
+          <p class="form-help">e.g. Enter <strong>2</strong> for ₹2 per ₹100 per month (24% per year).</p>
+          
+          <div id="loanInterestPreviewBox" class="backup-card" style="margin-top:10px;background:var(--bg-surface);border:1px solid var(--border-subtle);font-size:12px">
+            <div>Monthly Interest: <strong class="mono" id="prevMonthlyInterest" style="color:var(--gold);font-size:15px">₹1,000</strong> / month</div>
+            <div style="font-size:11px;color:var(--text-dim);margin-top:4px">Annual Equivalent: <span id="prevAnnualRate">24%</span> p.a. • Future interest drops automatically when principal is repaid!</div>
+          </div>
+        </div>
+
+        <!-- EMI FIELDS -->
+        <div id="emiFields" class="form-grid-2 hidden">
+          <div class="form-group">
+            <label class="form-label" for="loanEmiTenure">Total Installments *</label>
+            <input type="number" id="loanEmiTenure" class="form-input" min="1" max="365" value="10">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="loanEmiFreq">Installment Frequency *</label>
+            <select id="loanEmiFreq" class="form-select">
+              <option value="monthly">Monthly</option>
+              <option value="weekly">Weekly</option>
+              <option value="daily">Daily</option>
+            </select>
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label" for="loanEmiAmount">Installment Amount (₹) *</label>
+            <input type="number" id="loanEmiAmount" class="form-input" min="1" step="any" placeholder="e.g. 5500">
+          </div>
+        </div>
+
+        <!-- SECURITY / COLLATERAL -->
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="loanSecurityType">Security / Collateral Type</label>
+            <select id="loanSecurityType" class="form-select">
+              <option value="promissory_note">Promissory Note (புரோநோட்)</option>
+              <option value="cheque">Signed Blank Cheque (காசோலை)</option>
+              <option value="gold">Gold / Jewelry (தங்கம்)</option>
+              <option value="vehicle">Vehicle RC & Key (வாகனம்)</option>
+              <option value="property">Property / Land Documents (பத்திரம்)</option>
+              <option value="chit_prize">Chit Fund Prize / Dividend Collateral</option>
+              <option value="guarantor">Guarantor / Witness (ஜாமீன்)</option>
+              <option value="trust">Personal Trust / Unsecured</option>
+              <option value="other">Other Collateral</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="loanSecurityDetails">Security Details / Number</label>
+            <input type="text" id="loanSecurityDetails" class="form-input" maxlength="120" placeholder="e.g. Cheque #492810 (SBI) or Gold 10g">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="loanNotes">Purpose / Remarks</label>
+          <textarea id="loanNotes" class="form-textarea" maxlength="300" placeholder="Remarks, business purpose, guarantor contact, etc."></textarea>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn" data-close="loanModal">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="btnSaveLoan">Save Loan Account</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ==================== MODAL: RECORD LOAN PAYMENT ==================== -->
+<div class="modal-overlay hidden" id="loanPaymentModal">
+  <div class="modal-dialog">
+    <div class="sheet-handle"></div>
+    <div class="modal-head">
+      <h3 id="loanPayModalTitle">Record Loan Payment</h3>
+      <button class="modal-close" data-close="loanPaymentModal">✕</button>
+    </div>
+    <form id="loanPaymentForm" novalidate>
+      <div class="modal-body">
+        <input type="hidden" id="lpayLoanId">
+
+        <!-- LOAN OVERVIEW CARD -->
+        <div class="backup-card" style="background:var(--bg-surface);margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+            <div>
+              <div id="lpayBorrowerDisplay" style="font-size:16px;font-weight:800;color:var(--text-main)">Borrower Name</div>
+              <div id="lpaySubDisplay" style="font-size:12px;color:var(--text-muted);margin-top:2px">Disbursed on -</div>
+            </div>
+            <div style="text-align:right">
+              <small style="display:block;font-size:10px;color:var(--text-dim);font-weight:700">TOTAL SETTLEMENT BALANCE</small>
+              <b class="mono" id="lpaySettlementDisplay" style="font-size:20px;color:var(--gold)">₹0</b>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border-subtle)">
+            <div style="font-size:11px;color:var(--text-muted)">
+              Outstanding Principal: <strong class="mono" id="lpayPrincipalDisplay">₹0</strong>
+            </div>
+            <div style="font-size:11px;color:var(--text-muted);text-align:right">
+              Pending / Accrued Interest: <strong class="mono" id="lpayPendingInterestDisplay" style="color:var(--danger)">₹0</strong>
+            </div>
+          </div>
+          <div id="lpayInterestCalcNote" style="font-size:11px;color:var(--text-dim);margin-top:4px"></div>
+        </div>
+
+        <!-- PAYMENT ACTION OPTIONS -->
+        <div class="form-group">
+          <label class="form-label">Payment Type *</label>
+
+          <div class="pay-option-card selected" id="optLpayInterest">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:18px">🟢</span>
+              <div>
+                <strong style="display:block;font-size:14px" id="lpayOptInterestTitle">Pay Accrued Interest (₹0)</strong>
+                <small style="color:var(--text-muted);font-size:11px">Clears current pending interest. Principal balance remains unchanged.</small>
+              </div>
+            </div>
+            <input type="radio" name="lpayType" value="interest" checked style="accent-color:var(--primary)">
+          </div>
+
+          <div class="pay-option-card" id="optLpayPrincipal">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:18px">🟡</span>
+              <div>
+                <strong style="display:block;font-size:14px">Pay Principal Reduction (₹)</strong>
+                <small style="color:var(--text-muted);font-size:11px">Reduces outstanding principal! Future monthly interest automatically decreases.</small>
+              </div>
+            </div>
+            <input type="radio" name="lpayType" value="principal" style="accent-color:var(--primary)">
+          </div>
+
+          <div class="pay-option-card" id="optLpayBoth">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:18px">🔵</span>
+              <div>
+                <strong style="display:block;font-size:14px">Pay Both (Interest + Principal Reduction)</strong>
+                <small style="color:var(--text-muted);font-size:11px">Split payment into interest portion and principal portion.</small>
+              </div>
+            </div>
+            <input type="radio" name="lpayType" value="both" style="accent-color:var(--primary)">
+          </div>
+
+          <div class="pay-option-card" id="optLpaySettle">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:18px">🟣</span>
+              <div>
+                <strong style="display:block;font-size:14px" id="lpayOptSettleTitle">Full Settlement & Close Loan (₹0)</strong>
+                <small style="color:var(--text-muted);font-size:11px">Clears entire remaining principal and all interest. Closes the loan.</small>
+              </div>
+            </div>
+            <input type="radio" name="lpayType" value="settlement" style="accent-color:var(--primary)">
+          </div>
+        </div>
+
+        <!-- INPUT BOXES -->
+        <div id="lpayInputsBox" style="background:var(--bg-surface);border:1px solid var(--border-subtle);padding:14px;border-radius:var(--radius-sm);margin-bottom:14px">
+          <div id="lpayInterestBox" class="form-group" style="margin-bottom:10px">
+            <label class="form-label" for="lpayInterestInput" style="font-weight:700">Interest Payment Amount (₹) *</label>
+            <input type="number" id="lpayInterestInput" class="form-input" min="0" step="any" placeholder="0">
+          </div>
+          <div id="lpayPrincipalBox" class="form-group hidden" style="margin-bottom:10px">
+            <label class="form-label" for="lpayPrincipalInput" style="font-weight:700;color:var(--gold)">Principal Repayment Amount (₹) *</label>
+            <input type="number" id="lpayPrincipalInput" class="form-input" min="0" step="any" placeholder="0">
+          </div>
+          
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px dashed var(--border-subtle);font-size:12px;font-weight:700">
+            <span>Remaining Principal After Payment:</span>
+            <span class="mono" id="lpayNewPrincipalDisplay" style="color:var(--text-main)">₹0</span>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="lpayDate">Payment Date *</label>
+            <input type="date" id="lpayDate" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="lpayMode">Payment Method</label>
+            <select id="lpayMode" class="form-select">
+              <option value="Google Pay">Google Pay</option>
+              <option value="PhonePe">PhonePe</option>
+              <option value="Paytm / UPI">Paytm / UPI</option>
+              <option value="Cash">Cash</option>
+              <option value="Bank Transfer">Bank Transfer (IMPS/NEFT)</option>
+              <option value="Cheque">Cheque</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="lpayNotes">Payment Note / Reference</label>
+          <input type="text" id="lpayNotes" class="form-input" placeholder="e.g. UPI ref #498239 or Sept month interest">
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn" data-close="loanPaymentModal">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="btnSaveLoanPayment">Save to Ledger</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ==================== MODAL: BORROWER PASSBOOK & STATEMENT ==================== -->
+<div class="modal-overlay hidden" id="loanPassbookModal">
+  <div class="modal-dialog" style="max-width:800px">
+    <div class="sheet-handle"></div>
+    <div class="modal-head">
+      <h3>Borrower Loan Passbook</h3>
+      <button class="modal-close" data-close="loanPassbookModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="loanPassbookPrintArea">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-success" id="btnPassbookWhatsApp">
+        <span>💬 Send Statement on WhatsApp</span>
+      </button>
+      <button type="button" class="btn btn-primary" id="btnPrintPassbook">
+        <span>🖨️ Print Passbook</span>
+      </button>
+      <button type="button" class="btn" data-close="loanPassbookModal">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: WHATSAPP NOTICE & RECEIPT ==================== -->
+<div class="modal-overlay hidden" id="loanWhatsAppModal">
+  <div class="modal-dialog" style="max-width:560px">
+    <div class="sheet-handle"></div>
+    <div class="modal-head">
+      <h3>WhatsApp Loan Notice & Receipt</h3>
+      <button class="modal-close" data-close="loanWhatsAppModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="waLoanId">
+
+      <div class="backup-tabs" style="margin-bottom:14px">
+        <button class="backup-tab-btn active" id="waTabLoanDue" data-watype="due">
+          <span>🔔 Interest Due Notice</span>
+        </button>
+        <button class="backup-tab-btn" id="waTabLoanReceipt" data-watype="receipt">
+          <span>🧾 Payment Receipt</span>
+        </button>
+        <button class="backup-tab-btn" id="waTabLoanSettle" data-watype="settle">
+          <span>🏆 Settlement Certificate</span>
+        </button>
+      </div>
+
+      <div class="form-group">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <label class="form-label" style="margin-bottom:0">Message Preview (Editable):</label>
+          <span id="waLoanPhoneDisplay" style="font-size:12px;font-weight:700;color:var(--text-muted)"></span>
+        </div>
+        <textarea id="waLoanMsgText" class="form-textarea" rows="10" style="font-family:var(--font-mono);font-size:12px;line-height:1.5"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button type="button" class="btn" id="btnCopyLoanWhatsApp">
+        <span>📋 Copy Text</span>
+      </button>
+      <button type="button" class="btn btn-success" id="btnSendLoanWhatsApp">
+        <span>💬 Open in WhatsApp</span>
+      </button>
+      <button type="button" class="btn" data-close="loanWhatsAppModal">Close</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST BOX -->
 <div class="toast-container" id="toastBox"></div>
 
@@ -2428,11 +3055,17 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   const DEFAULT_COMMISSION = 5;
 
   let state = loadState();
+  let currentModule = "chits"; // "chits" or "loans"
   let selectedGroupId = null;
   let reportsGroupId = null;
   let currentMemberFilter = "all";
   let memberViewMode = "cards"; // "cards" or "table"
-  let currentReportTab = "dues"; // "dues", "summary", "auctions", "statement"
+  let currentLoanFilter = "all"; // "all", "active", "overdue", "closed"
+  let loanViewMode = "cards"; // "cards" or "table"
+  let currentReportTab = "dues"; // "dues", "summary", "auctions", "statement", "lending"
+  let activePassbookLoanId = null;
+  let activeWhatsAppLoanId = null;
+  let currentWhatsAppType = "due";
   let confirmCallback = null;
   let gdriveToken = null;
   let tokenClient = null;
@@ -2445,12 +3078,17 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   function loadState() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return { version: 3, groups: [] };
+      if (!raw) return { version: 3, groups: [], loans: [] };
       const parsed = JSON.parse(raw);
-      return (parsed && Array.isArray(parsed.groups)) ? parsed : { version: 3, groups: [] };
+      if (parsed && typeof parsed === "object") {
+        if (!Array.isArray(parsed.groups)) parsed.groups = [];
+        if (!Array.isArray(parsed.loans)) parsed.loans = [];
+        return parsed;
+      }
+      return { version: 3, groups: [], loans: [] };
     } catch (e) {
       console.error("Load state error:", e);
-      return { version: 3, groups: [] };
+      return { version: 3, groups: [], loans: [] };
     }
   }
 
@@ -2601,7 +3239,147 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     });
   }
 
+  function normalizeLoan(l) {
+    l.id = l.id || uid("loan");
+    l.borrowerName = (l.borrowerName || "Borrower").trim();
+    l.borrowerPhone = (l.borrowerPhone || "").trim();
+    l.borrowerAddress = (l.borrowerAddress || "").trim();
+    l.principal = Math.max(1, Math.round(Number(l.principal) * 100) / 100 || 1000);
+    l.disbursedDate = l.disbursedDate || new Date().toISOString().slice(0, 10);
+    l.loanType = (l.loanType === "emi") ? "emi" : "monthly_interest";
+    l.interestRate = Math.max(0, Number(l.interestRate) || 2);
+    l.securityType = l.securityType || "promissory_note";
+    l.securityDetails = (l.securityDetails || "").trim();
+    l.notes = (l.notes || "").trim();
+    l.status = (l.status === "closed") ? "closed" : "active";
+    if (l.loanType === "emi") {
+      l.emiTenure = Math.max(1, parseInt(l.emiTenure, 10) || 10);
+      l.emiFreq = l.emiFreq || "monthly";
+      l.emiAmount = Math.max(1, Math.round(Number(l.emiAmount) * 100) / 100 || Math.round((l.principal * 1.1) / l.emiTenure));
+    }
+    if (!Array.isArray(l.payments)) l.payments = [];
+    l.payments.forEach(p => {
+      p.id = p.id || uid("lpay");
+      p.date = p.date || l.disbursedDate;
+      p.type = p.type || "interest";
+      p.amount = Math.max(0, Math.round(Number(p.amount) * 100) / 100 || 0);
+      p.interestAmount = Math.max(0, Math.round(Number(p.interestAmount) * 100) / 100 || 0);
+      p.principalAmount = Math.max(0, Math.round(Number(p.principalAmount) * 100) / 100 || 0);
+      p.method = p.method || "Cash";
+      p.notes = (p.notes || "").trim();
+    });
+  }
+
+  function getLoan(id) {
+    return (state.loans || []).find(l => l.id === id);
+  }
+
+  function getLoanMetrics(l) {
+    const initialPrincipal = l.principal;
+    const principalRepaid = (l.payments || []).reduce((sum, p) => sum + (Number(p.principalAmount) || 0), 0);
+    const currentPrincipal = Math.max(0, Math.round((initialPrincipal - principalRepaid) * 100) / 100);
+    const interestCollected = (l.payments || []).reduce((sum, p) => sum + (Number(p.interestAmount) || 0), 0);
+    const totalPaid = (l.payments || []).reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+
+    const start = new Date(l.disbursedDate + "T00:00:00");
+    const now = new Date();
+    const diffDays = Math.max(0, Math.floor((now - start) / (1000 * 60 * 60 * 24)));
+    const elapsedMonths = diffDays / 30;
+
+    let monthlyInterestAmount = 0;
+    let totalAccruedInterest = 0;
+    let pendingInterest = 0;
+    let settlementAmount = 0;
+    let isOverdue = false;
+    let overdueDays = 0;
+    let nextDueDateStr = "-";
+
+    if (l.loanType === "monthly_interest") {
+      const r = Number(l.interestRate) || 2; // e.g. 2% per month
+      monthlyInterestAmount = Math.round(currentPrincipal * (r / 100) * 100) / 100;
+
+      // Calculate accrued interest across principal change segments
+      const principalEvents = (l.payments || [])
+        .filter(p => Number(p.principalAmount) > 0)
+        .map(p => ({ date: new Date(p.date + "T00:00:00"), repaid: Number(p.principalAmount) }))
+        .sort((a, b) => a.date - b.date);
+
+      let runningP = initialPrincipal;
+      let prevDate = start;
+      let calculatedAccrual = 0;
+
+      for (const ev of principalEvents) {
+        if (ev.date > prevDate && ev.date <= now) {
+          const segDays = Math.max(0, Math.floor((ev.date - prevDate) / (1000 * 60 * 60 * 24)));
+          calculatedAccrual += runningP * (r / 100) * (segDays / 30);
+          runningP = Math.max(0, runningP - ev.repaid);
+          prevDate = ev.date;
+        }
+      }
+      if (now > prevDate) {
+        const segDays = Math.max(0, Math.floor((now - prevDate) / (1000 * 60 * 60 * 24)));
+        calculatedAccrual += runningP * (r / 100) * (segDays / 30);
+      }
+
+      totalAccruedInterest = Math.round(calculatedAccrual * 100) / 100;
+      pendingInterest = (l.status === "closed" || currentPrincipal === 0) 
+        ? 0 
+        : Math.max(0, Math.round((totalAccruedInterest - interestCollected) * 100) / 100);
+
+      settlementAmount = (l.status === "closed") 
+        ? 0 
+        : Math.round((currentPrincipal + pendingInterest) * 100) / 100;
+
+      // Next monthly due date
+      const d = new Date(start);
+      while (d <= now) {
+        d.setMonth(d.getMonth() + 1);
+      }
+      nextDueDateStr = d.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+
+      // Overdue detection: if pending interest is more than 1 month's interest by 15%
+      if (l.status === "active" && pendingInterest > (monthlyInterestAmount * 1.15) && monthlyInterestAmount > 0) {
+        isOverdue = true;
+        overdueDays = Math.round((pendingInterest / monthlyInterestAmount) * 30);
+      }
+    } else {
+      // EMI Loan
+      const totalTenure = Number(l.emiTenure) || 10;
+      const emiAmt = Number(l.emiAmount) || Math.round((initialPrincipal * 1.1) / totalTenure);
+      const totalLoanVal = totalTenure * emiAmt;
+      const remainingBalance = Math.max(0, Math.round((totalLoanVal - totalPaid) * 100) / 100);
+      settlementAmount = (l.status === "closed") ? 0 : remainingBalance;
+      pendingInterest = 0;
+      monthlyInterestAmount = emiAmt;
+      
+      const compInstallments = Math.min(totalTenure, Math.floor(totalPaid / (emiAmt || 1)));
+      if (l.status === "active" && elapsedMonths > (compInstallments + 1)) {
+        isOverdue = true;
+        overdueDays = Math.round((elapsedMonths - compInstallments) * 30);
+      }
+    }
+
+    return {
+      initialPrincipal,
+      principalRepaid,
+      currentPrincipal,
+      interestCollected,
+      totalPaid,
+      monthlyInterestAmount,
+      totalAccruedInterest,
+      pendingInterest,
+      settlementAmount,
+      isOverdue,
+      overdueDays,
+      nextDueDateStr,
+      elapsedDays: diffDays,
+      elapsedMonths: Math.round(elapsedMonths * 10) / 10
+    };
+  }
+
+  if (!Array.isArray(state.loans)) state.loans = [];
   state.groups.forEach(normalizeGroup);
+  state.loans.forEach(normalizeLoan);
   saveState(true);
 
   /* ---------------------------------------------------------
@@ -2808,8 +3586,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem(THEME_KEY, theme);
     const icon = theme === "dark" ? "☀️" : "🌙";
-    $("themeIcon").textContent = icon;
-    $("bnavThemeIcon").textContent = icon;
+    if ($("themeIcon")) $("themeIcon").textContent = icon;
+    if ($("bnavThemeIcon")) $("bnavThemeIcon").textContent = icon;
     document.querySelector('meta[name="theme-color"]').setAttribute("content", theme === "dark" ? "#080c14" : "#f4f6fb");
   }
 
@@ -2818,8 +3596,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     applyTheme(current === "dark" ? "light" : "dark");
   }
 
-  $("themeToggleBtn").onclick = toggleTheme;
-  $("bnavTheme").onclick = toggleTheme;
+  if ($("themeToggleBtn")) $("themeToggleBtn").onclick = toggleTheme;
+  if ($("bnavTheme")) $("bnavTheme").onclick = toggleTheme;
 
   /* ---------------------------------------------------------
      MODAL: CREATE / EDIT CHIT GROUP & SETTINGS
@@ -3029,6 +3807,12 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     const pct = grandTotal > 0 ? Math.round((totalPaid / grandTotal) * 100) : 0;
     $("kpiPercent").textContent = grandTotal > 0 ? `${pct}% collected for completed rounds` : "No rounds completed yet";
 
+    if ($("badgeModuleChitCount")) $("badgeModuleChitCount").textContent = state.groups.length;
+    if ($("badgeModuleChitCount2")) $("badgeModuleChitCount2").textContent = state.groups.length;
+    const loanCount = (state.loans || []).length;
+    if ($("badgeModuleLoanCount")) $("badgeModuleLoanCount").textContent = loanCount;
+    if ($("badgeModuleLoanCount2")) $("badgeModuleLoanCount2").textContent = loanCount;
+
     const query = ($("groupSearchInput").value || "").toLowerCase().trim();
     const filtered = state.groups.filter(g => g.name.toLowerCase().includes(query));
 
@@ -3130,6 +3914,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     selectedGroupId = gid;
 
     $("dashSection").classList.add("hidden");
+    if ($("loansSection")) $("loansSection").classList.add("hidden");
     $("reportsSection").classList.add("hidden");
     $("detailSection").classList.remove("hidden");
 
@@ -3246,13 +4031,23 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     currentGroupTab = "auctions";
     $("detailSection").classList.add("hidden");
     $("reportsSection").classList.add("hidden");
-    $("dashSection").classList.remove("hidden");
 
-    $("bnavHome").classList.add("active");
+    if (currentModule === "loans") {
+      $("dashSection").classList.add("hidden");
+      if ($("loansSection")) $("loansSection").classList.remove("hidden");
+      if ($("bnavHome")) $("bnavHome").classList.remove("active");
+      if ($("bnavLoans")) $("bnavLoans").classList.add("active");
+      renderLoans();
+    } else {
+      if ($("loansSection")) $("loansSection").classList.add("hidden");
+      $("dashSection").classList.remove("hidden");
+      if ($("bnavHome")) $("bnavHome").classList.add("active");
+      if ($("bnavLoans")) $("bnavLoans").classList.remove("active");
+      renderDash();
+    }
+
     $("bnavLedger").classList.remove("active");
     $("bnavReports").classList.remove("active");
-
-    renderDash();
   }
 
   $("backToDashBtn").onclick = backToDashboard;
@@ -4050,6 +4845,1248 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   };
 
   /* ---------------------------------------------------------
+     MONEY LENDING & INTEREST LOAN MANAGER
+     --------------------------------------------------------- */
+  function populateMemberDatalist() {
+    const list = $("chitMembersDatalist");
+    const linkedSel = $("loanLinkedMember");
+    if (!list || !linkedSel) return;
+
+    const names = new Set();
+    let opts = `<option value="">-- Not Linked to Chit Group --</option>`;
+
+    (state.groups || []).forEach(g => {
+      (g.members || []).forEach(m => {
+        if (m.name && !names.has(m.name)) {
+          names.add(m.name);
+          opts += `<option value="${esc(m.id)}">${esc(m.name)} (${esc(g.name)})</option>`;
+        }
+      });
+    });
+
+    list.innerHTML = Array.from(names).map(n => `<option value="${esc(n)}"></option>`).join("");
+    linkedSel.innerHTML = opts;
+  }
+
+  function renderLoans() {
+    if (!Array.isArray(state.loans)) state.loans = [];
+    state.loans.forEach(normalizeLoan);
+
+    let totalLent = 0;
+    let totalActivePrincipal = 0;
+    let totalInterestCollected = 0;
+    let totalPendingInterest = 0;
+    let activeCount = 0;
+    let overdueCount = 0;
+    let closedCount = 0;
+
+    state.loans.forEach(l => {
+      const m = getLoanMetrics(l);
+      totalLent += l.principal;
+      totalInterestCollected += m.interestCollected;
+
+      if (l.status === "closed") {
+        closedCount++;
+      } else {
+        activeCount++;
+        totalActivePrincipal += m.currentPrincipal;
+        totalPendingInterest += m.pendingInterest;
+        if (m.isOverdue) overdueCount++;
+      }
+    });
+
+    if ($("kpiLoanTotalLent")) $("kpiLoanTotalLent").textContent = money(totalLent);
+    if ($("kpiLoanTotalCount")) $("kpiLoanTotalCount").textContent = `${state.loans.length} loans disbursed`;
+    if ($("kpiLoanActivePrincipal")) $("kpiLoanActivePrincipal").textContent = money(totalActivePrincipal);
+    if ($("kpiLoanActiveCount")) $("kpiLoanActiveCount").textContent = `${activeCount} active borrowers`;
+    if ($("kpiLoanInterestCollected")) $("kpiLoanInterestCollected").textContent = money(totalInterestCollected);
+    if ($("kpiLoanPendingInterest")) $("kpiLoanPendingInterest").textContent = money(totalPendingInterest);
+    if ($("kpiLoanOverdueCount")) $("kpiLoanOverdueCount").textContent = `${overdueCount} accounts overdue`;
+
+    if ($("lcntAll")) $("lcntAll").textContent = state.loans.length;
+    if ($("lcntActive")) $("lcntActive").textContent = activeCount;
+    if ($("lcntOverdue")) $("lcntOverdue").textContent = overdueCount;
+    if ($("lcntClosed")) $("lcntClosed").textContent = closedCount;
+
+    if ($("badgeModuleLoanCount")) $("badgeModuleLoanCount").textContent = state.loans.length;
+    if ($("badgeModuleLoanCount2")) $("badgeModuleLoanCount2").textContent = state.loans.length;
+
+    // Filter
+    const query = ($("loanSearchInput")?.value || "").toLowerCase().trim();
+    const filtered = state.loans.filter(l => {
+      const m = getLoanMetrics(l);
+      if (currentLoanFilter === "active" && l.status === "closed") return false;
+      if (currentLoanFilter === "overdue" && (!m.isOverdue || l.status === "closed")) return false;
+      if (currentLoanFilter === "closed" && l.status !== "closed") return false;
+
+      if (query) {
+        const text = `${l.borrowerName} ${l.borrowerPhone} ${l.securityDetails} ${l.notes}`.toLowerCase();
+        return text.includes(query);
+      }
+      return true;
+    });
+
+    renderLoanCards(filtered);
+    renderLoanTable(filtered);
+  }
+
+  function renderLoanCards(loans) {
+    const container = $("loanCardsView");
+    if (!container) return;
+
+    if (!loans.length) {
+      const query = ($("loanSearchInput")?.value || "").trim();
+      container.innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+          <div class="empty-icon">💰</div>
+          <div class="empty-title">${query ? "No matching loan accounts" : "No Money Lending Loans Yet"}</div>
+          <p class="empty-desc">${query ? "Try adjusting your search keywords." : "Issue your first loan for interest or click '✨ Load Sample Loans' above to immediately test interest tracking, reducing balance calculations, and WhatsApp receipts."}</p>
+          ${!query ? `<button class="btn btn-primary" onclick="openLoanModal()">＋ Issue First Loan</button>` : ""}
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = loans.map(l => {
+      const m = getLoanMetrics(l);
+      const isClosed = l.status === "closed";
+      const cleanPhone = l.borrowerPhone ? l.borrowerPhone.replace(/[^0-9]/g, "") : "";
+      const waDirectLink = cleanPhone ? `https://wa.me/${cleanPhone}` : "";
+
+      let statusBadge = "";
+      if (isClosed) {
+        statusBadge = `<span class="badge badge-green">✅ Closed / Settled</span>`;
+      } else if (m.isOverdue) {
+        statusBadge = `<span class="badge badge-red" style="font-weight:700">⚠️ Overdue (${m.overdueDays}d)</span>`;
+      } else {
+        statusBadge = `<span class="badge badge-green">🟢 Active</span>`;
+      }
+
+      let typeBadge = (l.loanType === "emi") 
+        ? `<span class="badge badge-purple">EMI Loan (${l.emiTenure || 10} Inst)</span>`
+        : `<span class="badge badge-blue">Monthly Interest (${l.interestRate}% / ₹${l.interestRate} vatti)</span>`;
+
+      let secIcon = "🔒";
+      if (l.securityType === "gold") secIcon = "🪙";
+      else if (l.securityType === "vehicle") secIcon = "🚗";
+      else if (l.securityType === "cheque") secIcon = "💳";
+      else if (l.securityType === "property") secIcon = "🏡";
+
+      return `
+        <div class="loan-card ${m.isOverdue ? "overdue" : ""} ${isClosed ? "closed" : ""}">
+          <div class="loan-card-head">
+            <div>
+              <div class="loan-borrower-name">
+                <span>${esc(l.borrowerName)}</span>
+                ${waDirectLink ? `<a href="${waDirectLink}" target="_blank" rel="noopener" title="Chat on WhatsApp" style="color:#25d366;font-size:14px;text-decoration:none">💬</a>` : ""}
+              </div>
+              <div class="loan-borrower-sub">
+                <span>📅 Disbursed: ${fmtDate(l.disbursedDate)}</span>
+                ${l.borrowerPhone ? `<span>📞 ${esc(l.borrowerPhone)}</span>` : ""}
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+              ${statusBadge}
+              ${typeBadge}
+            </div>
+          </div>
+
+          <!-- METRICS STRIP -->
+          <div class="loan-metrics-strip">
+            <div class="loan-metric-item">
+              <span class="loan-metric-label">Initial Principal</span>
+              <span class="loan-metric-val mono">${money(l.principal)}</span>
+            </div>
+            <div class="loan-metric-item" style="text-align:right">
+              <span class="loan-metric-label">Outstanding Principal</span>
+              <span class="loan-metric-val mono" style="color:${isClosed ? "var(--text-muted)" : "var(--gold)"}">
+                ${money(m.currentPrincipal)}
+              </span>
+            </div>
+            <div class="loan-metric-item">
+              <span class="loan-metric-label">Monthly Interest</span>
+              <span class="loan-metric-val mono" style="font-size:13px;color:var(--text-muted)">
+                ${l.loanType === "emi" ? money(m.monthlyInterestAmount) + " / inst" : money(m.monthlyInterestAmount) + " / mo"}
+              </span>
+            </div>
+            <div class="loan-metric-item" style="text-align:right">
+              <span class="loan-metric-label">Pending Interest</span>
+              <span class="loan-metric-val mono" style="font-size:13px;color:${m.pendingInterest > 0 ? "var(--danger)" : "var(--success)"}">
+                ${money(m.pendingInterest)}
+              </span>
+            </div>
+          </div>
+
+          <!-- SUMMARY LINE -->
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;background:var(--bg-app);padding:8px 12px;border-radius:var(--radius-xs);border:1px solid var(--border-subtle)">
+            <span style="color:var(--text-muted)">Total Settlement Balance:</span>
+            <strong class="mono" style="font-size:14px;color:${isClosed ? "var(--success-text)" : "var(--gold)"}">
+              ${isClosed ? "₹0 (Fully Settled)" : money(m.settlementAmount)}
+            </strong>
+          </div>
+
+          <!-- SECURITY INFO -->
+          <div class="loan-security-badge">
+            <span>${secIcon}</span>
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+              <strong>${esc(formatSecurityType(l.securityType))}:</strong> ${esc(l.securityDetails || "No details provided")}
+            </span>
+          </div>
+
+          <!-- ACTIONS -->
+          <div class="loan-actions-bar">
+            ${!isClosed ? `
+              <button class="btn btn-primary" data-collectpay="${esc(l.id)}" title="Record Interest or Principal Repayment">
+                <span>💳 Collect</span>
+              </button>
+            ` : `
+              <button class="btn btn-outline" data-collectpay="${esc(l.id)}" title="Add Adjustment Payment">
+                <span>💳 Add Pay</span>
+              </button>
+            `}
+            <button class="btn" data-passbook="${esc(l.id)}" title="View Complete Ledger Passbook">
+              <span>📖 Passbook</span>
+            </button>
+            <button class="btn" data-waloan="${esc(l.id)}" title="Send WhatsApp Reminder / Receipt" style="color:#25d366">
+              <span>💬 Notice</span>
+            </button>
+            <button class="btn btn-icon btn-sm" data-editloan="${esc(l.id)}" title="Edit Loan Details">
+              <span>✏️</span>
+            </button>
+            <button class="btn btn-icon btn-sm btn-danger" data-deleteloan="${esc(l.id)}" title="Delete Loan">
+              <span>🗑️</span>
+            </button>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    attachLoanCardListeners();
+  }
+
+  function renderLoanTable(loans) {
+    const table = $("loanFullTable");
+    if (!table) return;
+
+    if (!loans.length) {
+      table.innerHTML = `<tbody><tr><td colspan="10" style="text-align:center;padding:24px;color:var(--text-muted)">No matching loan accounts found.</td></tr></tbody>`;
+      return;
+    }
+
+    const rows = loans.map(l => {
+      const m = getLoanMetrics(l);
+      const isClosed = l.status === "closed";
+
+      let statusBadge = isClosed 
+        ? `<span class="badge badge-green">Closed</span>` 
+        : m.isOverdue 
+          ? `<span class="badge badge-red">Overdue</span>` 
+          : `<span class="badge badge-green">Active</span>`;
+
+      return `
+        <tr>
+          <td>
+            <strong>${esc(l.borrowerName)}</strong>
+            <small style="display:block;color:var(--text-dim);font-size:11px">${esc(l.borrowerPhone || "No phone")}</small>
+          </td>
+          <td>${fmtDate(l.disbursedDate)}</td>
+          <td class="mono">${money(l.principal)}</td>
+          <td class="mono" style="font-weight:700;color:${isClosed ? "var(--text-muted)" : "var(--gold)"}">${money(m.currentPrincipal)}</td>
+          <td>${l.loanType === "emi" ? "EMI" : `${l.interestRate}%/mo`}</td>
+          <td class="mono" style="color:var(--text-muted)">${money(m.monthlyInterestAmount)}</td>
+          <td class="mono" style="color:${m.pendingInterest > 0 ? "var(--danger)" : "var(--success)"};font-weight:700">${money(m.pendingInterest)}</td>
+          <td class="mono" style="font-weight:800;color:var(--gold)">${money(m.settlementAmount)}</td>
+          <td>${statusBadge}</td>
+          <td>
+            <div style="display:flex;gap:4px">
+              ${!isClosed ? `<button class="btn btn-sm btn-primary" data-collectpay="${esc(l.id)}">💳 Pay</button>` : ""}
+              <button class="btn btn-sm" data-passbook="${esc(l.id)}">📖</button>
+              <button class="btn btn-sm" data-waloan="${esc(l.id)}" style="color:#25d366">💬</button>
+              <button class="btn btn-sm btn-icon" data-editloan="${esc(l.id)}">✏️</button>
+              <button class="btn btn-sm btn-icon btn-danger" data-deleteloan="${esc(l.id)}">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join("");
+
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>Borrower</th>
+          <th>Disbursed</th>
+          <th>Initial Loan</th>
+          <th>Outstanding Principal</th>
+          <th>Rate</th>
+          <th>Monthly Int</th>
+          <th>Pending Int</th>
+          <th>Total Balance</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    `;
+
+    attachLoanCardListeners();
+  }
+
+  function formatSecurityType(type) {
+    const map = {
+      promissory_note: "Promissory Note",
+      cheque: "Signed Cheque",
+      gold: "Gold Collateral",
+      vehicle: "Vehicle RC",
+      property: "Property Document",
+      chit_prize: "Chit Prize Collateral",
+      guarantor: "Guarantor / Witness",
+      trust: "Trust / Unsecured",
+      other: "Security"
+    };
+    return map[type] || "Collateral";
+  }
+
+  function attachLoanCardListeners() {
+    document.querySelectorAll("[data-collectpay]").forEach(btn => {
+      btn.onclick = () => openLoanPaymentModal(btn.dataset.collectpay);
+    });
+    document.querySelectorAll("[data-passbook]").forEach(btn => {
+      btn.onclick = () => openLoanPassbookModal(btn.dataset.passbook);
+    });
+    document.querySelectorAll("[data-waloan]").forEach(btn => {
+      btn.onclick = () => openLoanWhatsAppModal(btn.dataset.waloan);
+    });
+    document.querySelectorAll("[data-editloan]").forEach(btn => {
+      btn.onclick = () => {
+        const l = getLoan(btn.dataset.editloan);
+        if (l) openLoanModal(l);
+      };
+    });
+    document.querySelectorAll("[data-deleteloan]").forEach(btn => {
+      btn.onclick = () => deleteLoan(btn.dataset.deleteloan);
+    });
+  }
+
+  function showModule(mod) {
+    currentModule = mod;
+    $("dashSection").classList.toggle("hidden", mod !== "chits");
+    $("loansSection").classList.toggle("hidden", mod !== "loans");
+    $("detailSection").classList.add("hidden");
+    $("reportsSection").classList.add("hidden");
+
+    document.querySelectorAll("[data-modtab]").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.modtab === mod);
+    });
+
+    if ($("bnavHome")) $("bnavHome").classList.toggle("active", mod === "chits");
+    if ($("bnavLoans")) $("bnavLoans").classList.toggle("active", mod === "loans");
+    if ($("bnavLedger")) $("bnavLedger").classList.remove("active");
+    if ($("bnavReports")) $("bnavReports").classList.remove("active");
+
+    if (mod === "loans") {
+      populateMemberDatalist();
+      renderLoans();
+    } else {
+      renderDash();
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // Hook module switcher buttons
+  document.querySelectorAll("[data-modtab]").forEach(btn => {
+    btn.onclick = () => showModule(btn.dataset.modtab);
+  });
+
+  if ($("navChitsBtn")) $("navChitsBtn").onclick = () => showModule("chits");
+  if ($("navLoansBtn")) $("navLoansBtn").onclick = () => showModule("loans");
+  if ($("bnavLoans")) $("bnavLoans").onclick = () => showModule("loans");
+  if ($("btnLoanReports")) {
+    $("btnLoanReports").onclick = () => {
+      openReports();
+      const tabBtn = document.querySelector('.rep-tab-btn[data-reptab="lending"]');
+      if (tabBtn) tabBtn.click();
+    };
+  }
+
+  // Loan search & filters
+  if ($("loanSearchInput")) $("loanSearchInput").oninput = () => renderLoans();
+  document.querySelectorAll("#loanFilterTabs .filter-tab").forEach(tab => {
+    tab.onclick = () => {
+      document.querySelectorAll("#loanFilterTabs .filter-tab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      currentLoanFilter = tab.dataset.lfilter;
+      renderLoans();
+    };
+  });
+
+  if ($("loanViewCardsBtn") && $("loanViewTableBtn")) {
+    $("loanViewCardsBtn").onclick = () => {
+      loanViewMode = "cards";
+      $("loanViewCardsBtn").classList.add("active");
+      $("loanViewTableBtn").classList.remove("active");
+      $("loanCardsView").classList.remove("hidden");
+      $("loanTableView").classList.add("hidden");
+    };
+    $("loanViewTableBtn").onclick = () => {
+      loanViewMode = "table";
+      $("loanViewTableBtn").classList.add("active");
+      $("loanViewCardsBtn").classList.remove("active");
+      $("loanCardsView").classList.add("hidden");
+      $("loanTableView").classList.remove("hidden");
+    };
+  }
+
+  /* ---------------------------------------------------------
+     MODAL: ISSUE & EDIT LOAN
+     --------------------------------------------------------- */
+  function openLoanModal(existingLoan = null) {
+    populateMemberDatalist();
+    const isEdit = !!existingLoan;
+
+    $("loanModalTitle").textContent = isEdit ? `Edit Loan - ${existingLoan.borrowerName}` : "Issue New Loan";
+    $("loanFormId").value = isEdit ? existingLoan.id : "";
+    $("loanBorrowerName").value = isEdit ? existingLoan.borrowerName : "";
+    $("loanBorrowerPhone").value = isEdit ? existingLoan.borrowerPhone : "";
+    $("loanBorrowerAddress").value = isEdit ? existingLoan.borrowerAddress : "";
+    $("loanPrincipal").value = isEdit ? existingLoan.principal : "";
+    $("loanDisbursedDate").value = isEdit ? existingLoan.disbursedDate : new Date().toISOString().slice(0, 10);
+    $("loanInterestRate").value = isEdit ? (existingLoan.interestRate || 2) : 2;
+    $("loanSecurityType").value = isEdit ? (existingLoan.securityType || "promissory_note") : "promissory_note";
+    $("loanSecurityDetails").value = isEdit ? (existingLoan.securityDetails || "") : "";
+    $("loanNotes").value = isEdit ? (existingLoan.notes || "") : "";
+
+    const lType = isEdit ? (existingLoan.loanType || "monthly_interest") : "monthly_interest";
+    document.querySelectorAll('input[name="loanType"]').forEach(r => {
+      r.checked = (r.value === lType);
+    });
+    toggleLoanTypeFields(lType);
+
+    if (isEdit && existingLoan.loanType === "emi") {
+      $("loanEmiTenure").value = existingLoan.emiTenure || 10;
+      $("loanEmiFreq").value = existingLoan.emiFreq || "monthly";
+      $("loanEmiAmount").value = existingLoan.emiAmount || "";
+    }
+
+    updateLoanFormPreview();
+    setModal("loanModal", true);
+  }
+
+  function toggleLoanTypeFields(type) {
+    $("monthlyInterestFields").classList.toggle("hidden", type !== "monthly_interest");
+    $("emiFields").classList.toggle("hidden", type !== "emi");
+  }
+
+  document.querySelectorAll('input[name="loanType"]').forEach(r => {
+    r.onchange = () => toggleLoanTypeFields(r.value);
+  });
+
+  function updateLoanFormPreview() {
+    const p = Math.max(0, parseFloat($("loanPrincipal").value) || 0);
+    const r = Math.max(0, parseFloat($("loanInterestRate").value) || 0);
+    const monthlyInt = Math.round(p * (r / 100) * 100) / 100;
+    const annualRate = Math.round(r * 12 * 10) / 10;
+
+    $("prevMonthlyInterest").textContent = money(monthlyInt);
+    $("prevAnnualRate").textContent = `${annualRate}%`;
+  }
+
+  $("loanPrincipal").oninput = updateLoanFormPreview;
+  $("loanInterestRate").oninput = updateLoanFormPreview;
+
+  $("loanBorrowerName").onchange = () => {
+    const name = $("loanBorrowerName").value.trim();
+    if (!name) return;
+    for (const g of state.groups) {
+      const found = (g.members || []).find(m => m.name.toLowerCase() === name.toLowerCase());
+      if (found) {
+        if (!$("loanBorrowerPhone").value && found.phone) $("loanBorrowerPhone").value = found.phone;
+        if (!$("loanBorrowerAddress").value && found.address) $("loanBorrowerAddress").value = found.address;
+        if ($("loanLinkedMember")) $("loanLinkedMember").value = found.id;
+        break;
+      }
+    }
+  };
+
+  $("btnAddLoan").onclick = () => openLoanModal();
+
+  $("loanForm").onsubmit = e => {
+    e.preventDefault();
+    const id = $("loanFormId").value;
+    const borrowerName = $("loanBorrowerName").value.trim();
+    const borrowerPhone = $("loanBorrowerPhone").value.trim();
+    const borrowerAddress = $("loanBorrowerAddress").value.trim();
+    const principal = Math.max(1, parseFloat($("loanPrincipal").value) || 0);
+    const disbursedDate = $("loanDisbursedDate").value || new Date().toISOString().slice(0, 10);
+    const loanType = document.querySelector('input[name="loanType"]:checked')?.value || "monthly_interest";
+    const interestRate = Math.max(0, parseFloat($("loanInterestRate").value) || 0);
+    const securityType = $("loanSecurityType").value;
+    const securityDetails = $("loanSecurityDetails").value.trim();
+    const notes = $("loanNotes").value.trim();
+
+    if (!borrowerName) {
+      toast("Please enter borrower name.", "error");
+      return;
+    }
+    if (principal <= 0) {
+      toast("Please enter a valid loan principal amount.", "error");
+      return;
+    }
+
+    if (!Array.isArray(state.loans)) state.loans = [];
+
+    if (id) {
+      // Editing
+      const l = getLoan(id);
+      if (!l) return;
+      l.borrowerName = borrowerName;
+      l.borrowerPhone = borrowerPhone;
+      l.borrowerAddress = borrowerAddress;
+      l.principal = principal;
+      l.disbursedDate = disbursedDate;
+      l.loanType = loanType;
+      l.interestRate = interestRate;
+      l.securityType = securityType;
+      l.securityDetails = securityDetails;
+      l.notes = notes;
+      if (loanType === "emi") {
+        l.emiTenure = parseInt($("loanEmiTenure").value, 10) || 10;
+        l.emiFreq = $("loanEmiFreq").value;
+        l.emiAmount = parseFloat($("loanEmiAmount").value) || Math.round((principal * 1.1) / l.emiTenure);
+      }
+      toast(`Loan account for ${borrowerName} updated!`, "success");
+    } else {
+      // New Loan
+      const newLoan = {
+        id: uid("loan"),
+        borrowerName,
+        borrowerPhone,
+        borrowerAddress,
+        principal,
+        disbursedDate,
+        loanType,
+        interestRate,
+        securityType,
+        securityDetails,
+        notes,
+        status: "active",
+        createdAt: new Date().toISOString(),
+        payments: []
+      };
+      if (loanType === "emi") {
+        newLoan.emiTenure = parseInt($("loanEmiTenure").value, 10) || 10;
+        newLoan.emiFreq = $("loanEmiFreq").value;
+        newLoan.emiAmount = parseFloat($("loanEmiAmount").value) || Math.round((principal * 1.1) / newLoan.emiTenure);
+      }
+      state.loans.unshift(newLoan);
+      toast(`New loan of ${money(principal)} issued to ${borrowerName}!`, "success");
+    }
+
+    saveState();
+    setModal("loanModal", false);
+    renderLoans();
+  };
+
+  function deleteLoan(loanId) {
+    const l = getLoan(loanId);
+    if (!l) return;
+    confirmDialog(
+      "Delete Loan Account?",
+      `Are you sure you want to permanently delete the loan record for "${l.borrowerName}" (${money(l.principal)}) and all its payment history? This cannot be undone.`,
+      () => {
+        state.loans = state.loans.filter(x => x.id !== loanId);
+        saveState();
+        toast("Loan account deleted.", "info");
+        renderLoans();
+      }
+    );
+  }
+
+  /* ---------------------------------------------------------
+     MODAL: RECORD LOAN PAYMENT
+     --------------------------------------------------------- */
+  function openLoanPaymentModal(loanId) {
+    const l = getLoan(loanId);
+    if (!l) return;
+
+    const m = getLoanMetrics(l);
+    $("lpayLoanId").value = loanId;
+    $("lpayBorrowerDisplay").textContent = l.borrowerName;
+    $("lpaySubDisplay").textContent = `Disbursed on ${fmtDate(l.disbursedDate)} • Phone: ${l.borrowerPhone || "No phone"}`;
+    $("lpayPrincipalDisplay").textContent = money(m.currentPrincipal);
+    $("lpayPendingInterestDisplay").textContent = money(m.pendingInterest);
+    $("lpaySettlementDisplay").textContent = money(m.settlementAmount);
+
+    $("lpayOptInterestTitle").textContent = `Pay Accrued Interest (${money(m.pendingInterest)})`;
+    $("lpayOptSettleTitle").textContent = `Full Settlement & Close Loan (${money(m.settlementAmount)})`;
+
+    $("lpayInterestCalcNote").textContent = l.loanType === "monthly_interest"
+      ? `Rate: ${l.interestRate}% / month (₹${l.interestRate} vatti) • Monthly interest is ${money(m.monthlyInterestAmount)} on ${money(m.currentPrincipal)} balance.`
+      : `EMI Loan: Installment is ${money(m.monthlyInterestAmount)} (${l.emiFreq || "monthly"}).`;
+
+    // Reset options
+    const defaultType = (m.currentPrincipal === 0) ? "settlement" : "interest";
+    document.querySelectorAll('input[name="lpayType"]').forEach(r => {
+      r.checked = (r.value === defaultType);
+    });
+    updateLoanPaymentOptionUI(defaultType, m);
+
+    $("lpayDate").value = new Date().toISOString().slice(0, 10);
+    $("lpayNotes").value = "";
+    $("lpayMode").value = "Google Pay";
+
+    setModal("loanPaymentModal", true);
+  }
+
+  function updateLoanPaymentOptionUI(selectedType, metrics = null) {
+    const lid = $("lpayLoanId").value;
+    const l = getLoan(lid);
+    const m = metrics || (l ? getLoanMetrics(l) : { currentPrincipal: 0, pendingInterest: 0, monthlyInterestAmount: 0 });
+
+    $("optLpayInterest").classList.toggle("selected", selectedType === "interest");
+    $("optLpayPrincipal").classList.toggle("selected", selectedType === "principal");
+    $("optLpayBoth").classList.toggle("selected", selectedType === "both");
+    $("optLpaySettle").classList.toggle("selected", selectedType === "settlement");
+
+    const intBox = $("lpayInterestBox");
+    const priBox = $("lpayPrincipalBox");
+    const intInput = $("lpayInterestInput");
+    const priInput = $("lpayPrincipalInput");
+
+    if (selectedType === "interest") {
+      intBox.classList.remove("hidden");
+      priBox.classList.add("hidden");
+      intInput.value = m.pendingInterest > 0 ? m.pendingInterest : m.monthlyInterestAmount;
+      priInput.value = 0;
+    } else if (selectedType === "principal") {
+      intBox.classList.add("hidden");
+      priBox.classList.remove("hidden");
+      intInput.value = 0;
+      priInput.value = Math.min(m.currentPrincipal, 10000);
+    } else if (selectedType === "both") {
+      intBox.classList.remove("hidden");
+      priBox.classList.remove("hidden");
+      intInput.value = m.pendingInterest > 0 ? m.pendingInterest : m.monthlyInterestAmount;
+      priInput.value = 0;
+    } else {
+      // Settlement
+      intBox.classList.remove("hidden");
+      priBox.classList.remove("hidden");
+      intInput.value = m.pendingInterest;
+      priInput.value = m.currentPrincipal;
+    }
+
+    updateLoanPaymentBalancePreview(m.currentPrincipal);
+  }
+
+  function updateLoanPaymentBalancePreview(curP) {
+    const priRepaid = Math.max(0, parseFloat($("lpayPrincipalInput").value) || 0);
+    const newP = Math.max(0, Math.round((curP - priRepaid) * 100) / 100);
+    $("lpayNewPrincipalDisplay").textContent = money(newP);
+  }
+
+  document.querySelectorAll('input[name="lpayType"]').forEach(r => {
+    r.onchange = () => updateLoanPaymentOptionUI(r.value);
+  });
+
+  $("optLpayInterest").onclick = () => {
+    document.querySelector('input[name="lpayType"][value="interest"]').checked = true;
+    updateLoanPaymentOptionUI("interest");
+  };
+  $("optLpayPrincipal").onclick = () => {
+    document.querySelector('input[name="lpayType"][value="principal"]').checked = true;
+    updateLoanPaymentOptionUI("principal");
+    $("lpayPrincipalInput").focus();
+  };
+  $("optLpayBoth").onclick = () => {
+    document.querySelector('input[name="lpayType"][value="both"]').checked = true;
+    updateLoanPaymentOptionUI("both");
+    $("lpayInterestInput").focus();
+  };
+  $("optLpaySettle").onclick = () => {
+    document.querySelector('input[name="lpayType"][value="settlement"]').checked = true;
+    updateLoanPaymentOptionUI("settlement");
+  };
+
+  $("lpayPrincipalInput").oninput = () => {
+    const l = getLoan($("lpayLoanId").value);
+    const m = l ? getLoanMetrics(l) : { currentPrincipal: 0 };
+    updateLoanPaymentBalancePreview(m.currentPrincipal);
+  };
+
+  $("loanPaymentForm").onsubmit = e => {
+    e.preventDefault();
+    const lid = $("lpayLoanId").value;
+    const l = getLoan(lid);
+    if (!l) return;
+
+    const m = getLoanMetrics(l);
+    const checkedRadio = document.querySelector('input[name="lpayType"]:checked');
+    const payType = checkedRadio ? checkedRadio.value : "interest";
+    const date = $("lpayDate").value || new Date().toISOString().slice(0, 10);
+    const method = $("lpayMode").value;
+    const notes = $("lpayNotes").value.trim();
+
+    let interestPart = 0;
+    let principalPart = 0;
+
+    if (payType === "interest") {
+      interestPart = Math.max(0, parseFloat($("lpayInterestInput").value) || 0);
+    } else if (payType === "principal") {
+      principalPart = Math.max(0, parseFloat($("lpayPrincipalInput").value) || 0);
+    } else if (payType === "both") {
+      interestPart = Math.max(0, parseFloat($("lpayInterestInput").value) || 0);
+      principalPart = Math.max(0, parseFloat($("lpayPrincipalInput").value) || 0);
+    } else {
+      // Settlement
+      interestPart = Math.max(0, parseFloat($("lpayInterestInput").value) || 0);
+      principalPart = Math.max(0, parseFloat($("lpayPrincipalInput").value) || 0);
+    }
+
+    const totalAmount = Math.round((interestPart + principalPart) * 100) / 100;
+    if (totalAmount <= 0) {
+      toast("Please enter a valid payment amount.", "error");
+      return;
+    }
+
+    const paymentRecord = {
+      id: uid("lpay"),
+      date,
+      type: payType,
+      amount: totalAmount,
+      interestAmount: interestPart,
+      principalAmount: principalPart,
+      method,
+      notes
+    };
+
+    if (!Array.isArray(l.payments)) l.payments = [];
+    l.payments.push(paymentRecord);
+
+    const updatedM = getLoanMetrics(l);
+    if (payType === "settlement" || (updatedM.currentPrincipal <= 0 && updatedM.pendingInterest <= 0)) {
+      l.status = "closed";
+      toast(`Loan for ${l.borrowerName} has been FULLY SETTLED & CLOSED! Balance is ₹0.`, "success");
+    } else {
+      toast(`Payment of ${money(totalAmount)} recorded for ${l.borrowerName}! Remaining principal: ${money(updatedM.currentPrincipal)}.`, "success");
+    }
+
+    saveState();
+    setModal("loanPaymentModal", false);
+    renderLoans();
+  };
+
+  /* ---------------------------------------------------------
+     MODAL: BORROWER PASSBOOK & STATEMENT
+     --------------------------------------------------------- */
+  function openLoanPassbookModal(loanId) {
+    const l = getLoan(loanId);
+    if (!l) return;
+    activePassbookLoanId = loanId;
+
+    const m = getLoanMetrics(l);
+    let runningPrincipal = l.principal;
+    const sortedPayments = (l.payments || []).slice().sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    const rows = [];
+    // Initial disbursement row
+    rows.push(`
+      <tr style="background:var(--bg-surface)">
+        <td>${fmtDate(l.disbursedDate)}</td>
+        <td><strong>🌟 Loan Disbursement</strong></td>
+        <td>Bank / Cash</td>
+        <td class="mono">-</td>
+        <td class="mono" style="color:var(--gold);font-weight:700">＋ ${money(l.principal)}</td>
+        <td class="mono" style="font-weight:800;color:var(--gold)">${money(l.principal)}</td>
+        <td>Initial loan disbursement</td>
+      </tr>
+    `);
+
+    sortedPayments.forEach(p => {
+      const pri = Number(p.principalAmount) || 0;
+      const int = Number(p.interestAmount) || 0;
+      runningPrincipal = Math.max(0, Math.round((runningPrincipal - pri) * 100) / 100);
+
+      let desc = "Interest Payment";
+      if (p.type === "principal") desc = "Principal Repayment";
+      else if (p.type === "both") desc = "Interest + Principal Repayment";
+      else if (p.type === "settlement") desc = "🏆 Full Loan Settlement";
+
+      rows.push(`
+        <tr>
+          <td>${fmtDate(p.date)}</td>
+          <td><strong>${desc}</strong></td>
+          <td>${esc(p.method || "Cash")}</td>
+          <td class="mono" style="color:var(--success-text)">${int > 0 ? money(int) : "-"}</td>
+          <td class="mono" style="color:${pri > 0 ? "var(--gold)" : "var(--text-muted)"}">${pri > 0 ? "− " + money(pri) : "-"}</td>
+          <td class="mono" style="font-weight:800">${money(runningPrincipal)}</td>
+          <td style="font-size:11px;color:var(--text-muted)">${esc(p.notes || "-")}</td>
+        </tr>
+      `);
+    });
+
+    const passbookHtml = `
+      <div style="border-bottom:2px solid var(--border-subtle);padding-bottom:14px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+        <div>
+          <span style="font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.05em">BORROWER LOAN LEDGER</span>
+          <h2 style="font-size:22px;font-weight:800;color:var(--text-main);margin:2px 0">${esc(l.borrowerName)}</h2>
+          <div style="font-size:12px;color:var(--text-muted);display:flex;gap:12px;flex-wrap:wrap">
+            <span>📞 Phone: ${esc(l.borrowerPhone || "None")}</span>
+            <span>📍 Address: ${esc(l.borrowerAddress || "None")}</span>
+            <span>📅 Disbursed: ${fmtDate(l.disbursedDate)}</span>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:12px;font-weight:700;color:var(--text-muted)">Account Status:</div>
+          <div style="font-size:16px;font-weight:800;color:${l.status === "closed" ? "var(--success)" : "var(--gold)"}">
+            ${l.status === "closed" ? "✅ FULLY SETTLED & CLOSED" : "🟢 ACTIVE ACCOUNT"}
+          </div>
+          <small style="font-size:11px;color:var(--text-dim)">Security: ${esc(formatSecurityType(l.securityType))}</small>
+        </div>
+      </div>
+
+      <!-- METRICS STRIP -->
+      <div class="summary-strip" style="margin-bottom:16px">
+        <div class="summary-pill">
+          <small>INITIAL PRINCIPAL</small>
+          <b class="mono">${money(l.principal)}</b>
+        </div>
+        <div class="summary-pill">
+          <small>PRINCIPAL REPAID</small>
+          <b class="mono" style="color:var(--success)">${money(m.principalRepaid)}</b>
+        </div>
+        <div class="summary-pill">
+          <small>OUTSTANDING PRINCIPAL</small>
+          <b class="mono" style="color:var(--gold)">${money(m.currentPrincipal)}</b>
+        </div>
+        <div class="summary-pill">
+          <small>INTEREST COLLECTED</small>
+          <b class="mono" style="color:var(--success)">${money(m.interestCollected)}</b>
+        </div>
+        <div class="summary-pill">
+          <small>PENDING INTEREST</small>
+          <b class="mono" style="color:${m.pendingInterest > 0 ? "var(--danger)" : "var(--success)"}">${money(m.pendingInterest)}</b>
+        </div>
+      </div>
+
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Description</th>
+              <th>Mode</th>
+              <th>Interest Paid</th>
+              <th>Principal Repaid</th>
+              <th>Balance Principal</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>${rows.join("")}</tbody>
+        </table>
+      </div>
+
+      <div style="margin-top:16px;padding:12px;background:var(--bg-surface);border-radius:var(--radius-sm);font-size:12px;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <div>Total Net Balance to Close Account: <strong class="mono" style="font-size:16px;color:var(--gold)">${money(m.settlementAmount)}</strong></div>
+        <div style="font-size:11px;color:var(--text-dim)">Statement generated on: ${new Date().toLocaleDateString("en-IN")}</div>
+      </div>
+    `;
+
+    $("loanPassbookPrintArea").innerHTML = passbookHtml;
+    setModal("loanPassbookModal", true);
+  }
+
+  $("btnPrintPassbook").onclick = () => {
+    window.print();
+  };
+
+  $("btnPassbookWhatsApp").onclick = () => {
+    setModal("loanPassbookModal", false);
+    if (activePassbookLoanId) openLoanWhatsAppModal(activePassbookLoanId, "due");
+  };
+
+  /* ---------------------------------------------------------
+     MODAL: WHATSAPP NOTICE & RECEIPT GENERATOR
+     --------------------------------------------------------- */
+  function openLoanWhatsAppModal(loanId, defaultTab = "due") {
+    const l = getLoan(loanId);
+    if (!l) return;
+    activeWhatsAppLoanId = loanId;
+    currentWhatsAppType = defaultTab;
+
+    $("waLoanId").value = loanId;
+    $("waLoanPhoneDisplay").textContent = l.borrowerPhone ? `📱 ${l.borrowerPhone}` : "⚠️ No phone saved";
+
+    document.querySelectorAll("#loanWhatsAppModal .backup-tab-btn").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.watype === defaultTab);
+    });
+
+    generateLoanWhatsAppMessage(l, defaultTab);
+    setModal("loanWhatsAppModal", true);
+  }
+
+  document.querySelectorAll("#loanWhatsAppModal .backup-tab-btn").forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll("#loanWhatsAppModal .backup-tab-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentWhatsAppType = btn.dataset.watype;
+      const l = getLoan(activeWhatsAppLoanId);
+      if (l) generateLoanWhatsAppMessage(l, currentWhatsAppType);
+    };
+  });
+
+  function generateLoanWhatsAppMessage(l, type) {
+    const m = getLoanMetrics(l);
+    let msg = "";
+
+    if (type === "due") {
+      msg = `*LOAN INTEREST DUE NOTICE*\n` +
+        `----------------------------------------\n` +
+        `Dear *${l.borrowerName}*,\n\n` +
+        `This is a gentle reminder regarding your loan account:\n\n` +
+        `• *Original Loan:* ${money(l.principal)}\n` +
+        `• *Outstanding Principal:* ${money(m.currentPrincipal)}\n` +
+        `• *Monthly Interest Rate:* ${l.interestRate}% (₹${l.interestRate} vatti)\n` +
+        `• *Monthly Interest Amount:* ${money(m.monthlyInterestAmount)}\n` +
+        `• *Pending / Accrued Interest Due:* ${money(m.pendingInterest)}\n` +
+        `• *Total to Settle:* ${money(m.settlementAmount)}\n` +
+        `• *Next Due Date:* ${m.nextDueDateStr}\n\n` +
+        `Kindly pay the pending interest at your convenience via Google Pay / PhonePe / Cash.\n\n` +
+        `Thank you,\nFinance & Chit Fund Management`;
+    } else if (type === "receipt") {
+      const lastPayment = (l.payments || []).slice(-1)[0] || {
+        date: new Date().toISOString().slice(0, 10),
+        amount: m.monthlyInterestAmount,
+        type: "interest",
+        method: "Google Pay"
+      };
+
+      msg = `*LOAN PAYMENT RECEIPT*\n` +
+        `----------------------------------------\n` +
+        `Dear *${l.borrowerName}*,\n\n` +
+        `We have successfully received your payment:\n\n` +
+        `• *Payment Date:* ${fmtDate(lastPayment.date)}\n` +
+        `• *Amount Received:* ${money(lastPayment.amount)}\n` +
+        `• *Payment Mode:* ${lastPayment.method || "Cash"}\n` +
+        `• *Payment Towards:* ${lastPayment.type === "principal" ? "Principal Repayment" : "Interest Payment"}\n\n` +
+        `*Updated Account Status:*\n` +
+        `• *Remaining Principal Balance:* ${money(m.currentPrincipal)}\n` +
+        `• *Remaining Pending Interest:* ${money(m.pendingInterest)}\n` +
+        `• *Total Balance to Settle:* ${money(m.settlementAmount)}\n\n` +
+        `Thank you for your prompt payment!`;
+    } else {
+      // Settle
+      msg = `*LOAN SETTLEMENT ACKNOWLEDGEMENT*\n` +
+        `----------------------------------------\n` +
+        `Dear *${l.borrowerName}*,\n\n` +
+        `We are pleased to confirm that your loan of *${money(l.principal)}* (disbursed on ${fmtDate(l.disbursedDate)}) has been *FULLY REPAID & SETTLED*.\n\n` +
+        `• *Remaining Principal:* ₹0\n` +
+        `• *Pending Interest:* ₹0\n` +
+        `• *Account Status:* CLOSED & CLEARED ✅\n\n` +
+        `Security document / cheque will be handed over to you.\n\n` +
+        `Thank you for your excellent partnership!\nFinance Management`;
+    }
+
+    $("waLoanMsgText").value = msg;
+  }
+
+  $("btnSendLoanWhatsApp").onclick = () => {
+    const l = getLoan(activeWhatsAppLoanId);
+    if (!l) return;
+    const cleanPhone = l.borrowerPhone ? l.borrowerPhone.replace(/[^0-9]/g, "") : "";
+    const text = encodeURIComponent($("waLoanMsgText").value);
+    const url = cleanPhone ? `https://wa.me/${cleanPhone}?text=${text}` : `https://wa.me/?text=${text}`;
+    window.open(url, "_blank");
+  };
+
+  $("btnCopyLoanWhatsApp").onclick = () => {
+    const text = $("waLoanMsgText").value;
+    navigator.clipboard.writeText(text).then(() => {
+      toast("Message copied to clipboard!", "success");
+    }).catch(() => {
+      $("waLoanMsgText").select();
+      document.execCommand("copy");
+      toast("Message copied!", "success");
+    });
+  };
+
+  /* ---------------------------------------------------------
+     SAMPLE LOANS DEMO DATA
+     --------------------------------------------------------- */
+  function getSampleLoans() {
+    return [
+      {
+        id: uid("loan"),
+        borrowerName: "Ramesh Kumar (Shree Textiles)",
+        borrowerPhone: "9876543210",
+        borrowerAddress: "14, Bazaar Street, Salem",
+        principal: 50000,
+        disbursedDate: "2026-07-01",
+        loanType: "monthly_interest",
+        interestRate: 2,
+        securityType: "promissory_note",
+        securityDetails: "Signed Promissory Note & Blank Cheque #492810 (SBI)",
+        status: "active",
+        notes: "Shop working capital expansion",
+        payments: [
+          {
+            id: uid("lpay"),
+            date: "2026-08-01",
+            type: "interest",
+            amount: 1000,
+            interestAmount: 1000,
+            principalAmount: 0,
+            method: "Google Pay",
+            notes: "July 2026 interest paid"
+          },
+          {
+            id: uid("lpay"),
+            date: "2026-09-01",
+            type: "interest",
+            amount: 1000,
+            interestAmount: 1000,
+            principalAmount: 0,
+            method: "Google Pay",
+            notes: "Aug 2026 interest paid"
+          }
+        ]
+      },
+      {
+        id: uid("loan"),
+        borrowerName: "Senthil Nathan (Auto Works)",
+        borrowerPhone: "9443218765",
+        borrowerAddress: "Plot 8, Industrial Estate, Salem",
+        principal: 100000,
+        disbursedDate: "2026-06-15",
+        loanType: "monthly_interest",
+        interestRate: 2.5,
+        securityType: "vehicle",
+        securityDetails: "TVS Apache RC Original Document & Key",
+        status: "active",
+        notes: "Tools & machinery purchase",
+        payments: [
+          {
+            id: uid("lpay"),
+            date: "2026-07-15",
+            type: "interest",
+            amount: 2500,
+            interestAmount: 2500,
+            principalAmount: 0,
+            method: "Cash",
+            notes: "Month 1 interest"
+          },
+          {
+            id: uid("lpay"),
+            date: "2026-08-15",
+            type: "both",
+            amount: 22500,
+            interestAmount: 2500,
+            principalAmount: 20000,
+            method: "Bank Transfer",
+            notes: "Month 2 interest + ₹20,000 principal repayment"
+          },
+          {
+            id: uid("lpay"),
+            date: "2026-09-15",
+            type: "interest",
+            amount: 2000,
+            interestAmount: 2000,
+            principalAmount: 0,
+            method: "Google Pay",
+            notes: "Month 3 interest on reduced ₹80,000 balance"
+          }
+        ]
+      },
+      {
+        id: uid("loan"),
+        borrowerName: "Priya Murugan",
+        borrowerPhone: "9123456780",
+        borrowerAddress: "45, Temple Road, Omalur",
+        principal: 30000,
+        disbursedDate: "2026-06-01",
+        loanType: "monthly_interest",
+        interestRate: 2,
+        securityType: "gold",
+        securityDetails: "Gold Chain 12 grams (Safe Locker #4)",
+        status: "active",
+        notes: "College fees emergency",
+        payments: [
+          {
+            id: uid("lpay"),
+            date: "2026-07-01",
+            type: "interest",
+            amount: 600,
+            interestAmount: 600,
+            principalAmount: 0,
+            method: "PhonePe",
+            notes: "June interest"
+          }
+        ]
+      },
+      {
+        id: uid("loan"),
+        borrowerName: "Anand Raj",
+        borrowerPhone: "9842109876",
+        borrowerAddress: "7, Cross Street, Salem",
+        principal: 25000,
+        disbursedDate: "2026-05-01",
+        loanType: "monthly_interest",
+        interestRate: 2,
+        securityType: "promissory_note",
+        securityDetails: "Signed Promissory Note",
+        status: "closed",
+        notes: "Agriculture season loan",
+        payments: [
+          {
+            id: uid("lpay"),
+            date: "2026-06-01",
+            type: "interest",
+            amount: 500,
+            interestAmount: 500,
+            principalAmount: 0,
+            method: "Cash",
+            notes: "Month 1 interest"
+          },
+          {
+            id: uid("lpay"),
+            date: "2026-07-01",
+            type: "interest",
+            amount: 500,
+            interestAmount: 500,
+            principalAmount: 0,
+            method: "Cash",
+            notes: "Month 2 interest"
+          },
+          {
+            id: uid("lpay"),
+            date: "2026-08-01",
+            type: "settlement",
+            amount: 25500,
+            interestAmount: 500,
+            principalAmount: 25000,
+            method: "Cash",
+            notes: "Full settlement - loan closed"
+          }
+        ]
+      }
+    ];
+  }
+
+  if ($("btnLoadSampleLoans")) {
+    $("btnLoadSampleLoans").onclick = () => {
+      confirmDialog(
+        "Load Sample Loans?",
+        "Load 4 realistic sample money lending loan accounts (Simple interest, principal reduction, gold loan, and settled loan) to explore all features?",
+        () => {
+          state.loans = getSampleLoans();
+          saveState();
+          toast("Sample loan accounts loaded successfully!", "success");
+          renderLoans();
+        }
+      );
+    };
+  }
+
+  function generateLendingReport() {
+    if (!Array.isArray(state.loans)) state.loans = [];
+    state.loans.forEach(normalizeLoan);
+
+    let totalLent = 0;
+    let totalActivePrincipal = 0;
+    let totalInterestCollected = 0;
+    let totalPendingInterest = 0;
+    let activeLoans = [];
+
+    state.loans.forEach(l => {
+      const m = getLoanMetrics(l);
+      totalLent += l.principal;
+      totalInterestCollected += m.interestCollected;
+      if (l.status !== "closed") {
+        totalActivePrincipal += m.currentPrincipal;
+        totalPendingInterest += m.pendingInterest;
+        activeLoans.push({ loan: l, metrics: m });
+      }
+    });
+
+    const activeRows = activeLoans.map(({ loan: l, metrics: m }) => {
+      const cleanPhone = l.borrowerPhone ? l.borrowerPhone.replace(/[^0-9]/g, "") : "";
+      const waLink = cleanPhone ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(`Hi ${l.borrowerName}, reminder: your monthly loan interest of ${money(m.monthlyInterestAmount)} (Pending: ${money(m.pendingInterest)}) is due. Remaining principal: ${money(m.currentPrincipal)}. Thank you!`)}` : "";
+
+      return `
+        <tr>
+          <td>
+            <strong>${esc(l.borrowerName)}</strong>
+            <small style="display:block;font-size:11px;color:var(--text-dim)">${esc(l.borrowerPhone || "No phone")}</small>
+          </td>
+          <td>${fmtDate(l.disbursedDate)}</td>
+          <td class="mono">${money(l.principal)}</td>
+          <td class="mono" style="font-weight:700;color:var(--gold)">${money(m.currentPrincipal)}</td>
+          <td>${l.loanType === "emi" ? "EMI" : `${l.interestRate}%/mo`}</td>
+          <td class="mono">${money(m.monthlyInterestAmount)}</td>
+          <td class="mono" style="color:${m.pendingInterest > 0 ? "var(--danger)" : "var(--success)"};font-weight:700">${money(m.pendingInterest)}</td>
+          <td class="mono" style="font-weight:800;color:var(--gold)">${money(m.settlementAmount)}</td>
+          <td>${m.isOverdue ? `<span class="badge badge-red">Overdue (${m.overdueDays}d)</span>` : `<span class="badge badge-green">Up to date</span>`}</td>
+          <td class="no-print">
+            ${waLink ? `<a href="${waLink}" target="_blank" rel="noopener" class="btn btn-sm" style="color:#25d366;border-color:rgba(37,211,102,0.3)">💬 WhatsApp</a>` : "-"}
+          </td>
+        </tr>
+      `;
+    }).join("");
+
+    return reportHeaderHtml("Money Lending & Interest Portfolio Report", "Executive portfolio summary, monthly collection demand register, and borrower status.") + `
+      <!-- EXECUTIVE SCORECARD -->
+      <div class="summary-strip" style="margin-bottom:20px">
+        <div class="summary-pill">
+          <small>TOTAL CAPITAL LENT</small>
+          <b class="mono">${money(totalLent)}</b>
+        </div>
+        <div class="summary-pill">
+          <small>ACTIVE PRINCIPAL AT RISK</small>
+          <b class="mono" style="color:var(--gold)">${money(totalActivePrincipal)}</b>
+        </div>
+        <div class="summary-pill">
+          <small>INTEREST PROFIT EARNED</small>
+          <b class="mono" style="color:var(--success)">${money(totalInterestCollected)}</b>
+        </div>
+        <div class="summary-pill">
+          <small>PENDING / OVERDUE INTEREST</small>
+          <b class="mono" style="color:${totalPendingInterest > 0 ? "var(--danger)" : "var(--success)"}">${money(totalPendingInterest)}</b>
+        </div>
+        <div class="summary-pill">
+          <small>ACTIVE / TOTAL LOANS</small>
+          <b>${activeLoans.length} active / ${state.loans.length} total</b>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <h3 style="font-size:16px;font-weight:800;color:var(--text-main)">📅 Monthly Collection Demand Register (வசூல் பட்டியல்)</h3>
+        <span style="font-size:12px;color:var(--text-muted)">Active borrowers who owe monthly interest or principal</span>
+      </div>
+
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Borrower</th>
+              <th>Disbursed</th>
+              <th>Initial Loan</th>
+              <th>Balance Principal</th>
+              <th>Rate</th>
+              <th>Monthly Int</th>
+              <th>Pending Int</th>
+              <th>Settlement Due</th>
+              <th>Status</th>
+              <th class="no-print">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${activeRows || `<tr><td colspan="10" style="text-align:center;padding:24px;color:var(--text-muted)">No active loans currently. All loans settled or none issued.</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  /* ---------------------------------------------------------
      REPORTS (SIMPLE, EFFECTIVE & PRINTABLE)
      --------------------------------------------------------- */
   function openReports(gid = null) {
@@ -4063,6 +6100,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     populateReportGroupSelect();
 
     $("dashSection").classList.add("hidden");
+    if ($("loansSection")) $("loansSection").classList.add("hidden");
     $("detailSection").classList.add("hidden");
     $("reportsSection").classList.remove("hidden");
 
@@ -4099,6 +6137,31 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   function updateReportView() {
     const memSel = $("reportMemberSelect");
     const memContainer = $("repMemberSelectContainer");
+
+    if (currentReportTab === "lending") {
+      $("repHeading").textContent = "Reports — Money Lending & Interest Portfolio";
+      memContainer.classList.add("hidden");
+
+      let totalLent = 0, totalActivePrincipal = 0, totalInterestCollected = 0, totalPendingInterest = 0;
+      (state.loans || []).forEach(l => {
+        const m = getLoanMetrics(l);
+        totalLent += l.principal;
+        totalInterestCollected += m.interestCollected;
+        if (l.status !== "closed") {
+          totalActivePrincipal += m.currentPrincipal;
+          totalPendingInterest += m.pendingInterest;
+        }
+      });
+
+      $("repScorecardStrip").innerHTML = `
+        <div class="summary-pill"><small>Capital Disbursed</small><b class="mono">${money(totalLent)}</b></div>
+        <div class="summary-pill"><small>Active Principal</small><b class="mono" style="color:var(--gold)">${money(totalActivePrincipal)}</b></div>
+        <div class="summary-pill"><small>Interest Collected</small><b class="mono" style="color:var(--success-text)">${money(totalInterestCollected)}</b></div>
+        <div class="summary-pill"><small>Pending Interest</small><b class="mono" style="color:${totalPendingInterest > 0 ? "var(--danger-text)" : "var(--success-text)"}">${money(totalPendingInterest)}</b></div>
+      `;
+      renderReportContent();
+      return;
+    }
 
     if (reportsGroupId) {
       const g = getGroup(reportsGroupId);
@@ -4156,7 +6219,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
       if ($("repMemberSelectContainer")) {
         $("repMemberSelectContainer").classList.toggle("hidden", currentReportTab !== "statement" || !reportsGroupId);
       }
-      renderReportContent();
+      updateReportView();
     };
   });
 
@@ -4166,6 +6229,11 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
   function renderReportContent() {
     let html = "";
+    if (currentReportTab === "lending") {
+      html = generateLendingReport();
+      $("printArea").innerHTML = html;
+      return;
+    }
     if (!reportsGroupId) {
       if (currentReportTab === "dues") {
         html = generateAllGroupsDuesReport();
@@ -4648,6 +6716,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
       version: 3,
       exportedAt: new Date().toISOString(),
       groupsCount: state.groups.length,
+      loansCount: (state.loans || []).length,
       data: state
     };
     const jsonStr = JSON.stringify(dataObj, null, 2);
@@ -4739,15 +6808,22 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
       try {
         const parsed = JSON.parse(reader.result);
         const data = parsed.data || parsed;
-        if (!data || !Array.isArray(data.groups)) {
+        if (!data || (!Array.isArray(data.groups) && !Array.isArray(data.loans))) {
           throw new Error("Invalid structure");
         }
+        const grpCount = (data.groups || []).length;
+        const loanCount = (data.loans || []).length;
         confirmDialog(
           "Restore Backup?",
-          `Found ${data.groups.length} chit groups. Restoring will replace existing data on this browser. Proceed?`,
+          `Found ${grpCount} chit group(s) and ${loanCount} money lending account(s). Restoring will replace existing data on this browser. Proceed?`,
           () => {
-            state = { version: 3, groups: data.groups };
+            state = { 
+              version: 3, 
+              groups: Array.isArray(data.groups) ? data.groups : [],
+              loans: Array.isArray(data.loans) ? data.loans : []
+            };
             state.groups.forEach(normalizeGroup);
+            state.loans.forEach(normalizeLoan);
             saveState();
             toast("Backup restored successfully!", "success");
             setModal("backupModal", false);
@@ -4811,7 +6887,10 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
         confirmDialog("Rollback to Snapshot?", `Restore this local checkpoint from ${new Date(snap.timestamp).toLocaleTimeString()}?`, () => {
           try {
             state = JSON.parse(snap.data);
+            if (!Array.isArray(state.groups)) state.groups = [];
+            if (!Array.isArray(state.loans)) state.loans = [];
             state.groups.forEach(normalizeGroup);
+            state.loans.forEach(normalizeLoan);
             saveState(true);
             toast("Rolled back to checkpoint!", "success");
             setModal("backupModal", false);
@@ -5137,6 +7216,9 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
       state.groups = [demoGroup1];
       state.groups.forEach(normalizeGroup);
+      if (!state.loans || state.loans.length === 0) {
+        state.loans = getSampleLoans();
+      }
       saveState();
       toast("Demo data loaded with exact partial amounts, net prizes, and locked rounds!", "success");
       renderDash();
